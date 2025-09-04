@@ -339,9 +339,9 @@ export default function Dashboard() {
           <div className="flex justify-between items-center py-8">
             <div className="flex items-center gap-4">
               <img 
-                src="/logo.png" 
+                src="/logo.png?v=2" 
                 alt="GradTracker Logo" 
-                className="w-10 h-10 object-contain"
+                className="w-8 h-8 object-contain"
               />
               <div>
                 <h1 className="text-4xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
@@ -540,6 +540,35 @@ export default function Dashboard() {
           </div>
         )}
 
+        {/* Enhanced Stats Summary - Moved up for better visibility */}
+        {!loading && !error && applications.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-10">
+            {statusOptions.slice(1).map((status) => {
+              const count = applications.filter(app => app.status === status.value).length;
+              return (
+                <div
+                  key={status.value}
+                  className={`card-hover bg-white rounded-xl p-6 text-center border border-slate-100`}
+                  style={{ boxShadow: 'var(--shadow-md)' }}
+                >
+                  <div className="flex items-center justify-center mb-4">
+                    <div className={`w-4 h-4 rounded-full ${status.dotColor} mr-3`}></div>
+                    <span className={`inline-flex px-4 py-2 rounded-full text-sm font-semibold ${status.bgColor} ${status.textColor} status-badge`}>
+                      {status.label}
+                    </span>
+                  </div>
+                  <div className="text-3xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
+                    {count}
+                  </div>
+                  <div className="text-sm mt-1" style={{ color: 'var(--color-text-tertiary)' }}>
+                    applications
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
         {/* SECONDARY SECTIONS - Always visible but applications remain the primary focus */}
         {!loading && !error && (
           <>
@@ -659,32 +688,6 @@ export default function Dashboard() {
               <ResumesDisplay />
             </div>
 
-            {/* Enhanced Stats Summary */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-10">
-              {statusOptions.slice(1).map((status) => {
-                const count = applications.filter(app => app.status === status.value).length;
-                return (
-                  <div
-                    key={status.value}
-                    className={`card-hover bg-white rounded-xl p-6 text-center border border-slate-100`}
-                    style={{ boxShadow: 'var(--shadow-md)' }}
-                  >
-                    <div className="flex items-center justify-center mb-4">
-                      <div className={`w-4 h-4 rounded-full ${status.dotColor} mr-3`}></div>
-                      <span className={`inline-flex px-4 py-2 rounded-full text-sm font-semibold ${status.bgColor} ${status.textColor} status-badge`}>
-                        {status.label}
-                      </span>
-                    </div>
-                    <div className="text-3xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
-                      {count}
-                    </div>
-                    <div className="text-sm mt-1" style={{ color: 'var(--color-text-tertiary)' }}>
-                      applications
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
           </>
         )}
 
