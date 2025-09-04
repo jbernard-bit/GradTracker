@@ -182,7 +182,7 @@ export default function Dashboard() {
                 GradTracker
               </h1>
               <p className="text-lg mt-2" style={{ color: 'var(--color-text-secondary)' }}>
-                Your modern job application tracking dashboard
+                Track your job applications with ease
               </p>
             </div>
             <ApplicationForm onApplicationAdded={handleApplicationAdded} />
