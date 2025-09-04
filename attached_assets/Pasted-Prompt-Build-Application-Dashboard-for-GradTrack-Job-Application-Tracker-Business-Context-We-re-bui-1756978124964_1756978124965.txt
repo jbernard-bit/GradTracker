@@ -1,0 +1,92 @@
+Prompt: Build Application Dashboard for GradTrack Job Application Tracker
+Business Context
+We're building GradTrack, a focused job application tracker competing with existing tools like Teal and Trac. Our competitive advantage is simplicity and focus - doing application tracking exceptionally well rather than trying to be an all-in-one career tool. Market research shows people are actively searching for good application trackers on Reddit but current solutions have low awareness, indicating a clear market opportunity.
+
+Current Technical Setup
+Framework: Next.js 15.2.3 with React 19
+Styling: Tailwind CSS 4.1.12
+Database: Firebase Firestore (connection working, warnings are normal)
+Existing Components: ApplicationForm.tsx (fully functional modal form)
+Current State: Basic test page showing applications, but ApplicationForm not integrated
+Current File Structure
+- components/ApplicationForm.tsx (✅ Complete - modal form with all fields)
+- pages/index.tsx (❌ Needs complete rebuild as dashboard)
+- lib/firebase.js (✅ Working - Firestore connection established)
+Milestone 1 Requirements to Implement
+Application Dashboard Integration - Replace test code with proper dashboard
+Application List View - Display all applications in organized layout
+Filtering System - Filter by company, status, date
+Sorting System - Sort by date created, company name, status
+Status Management - Visual status indicators with proper styling
+Explicit Changes Needed
+pages/index.tsx - Complete Rebuild
+Replace the entire current test implementation with:
+
+Import and integrate existing ApplicationForm component
+Real-time application fetching from Firestore using onSnapshot
+Filter controls (company search, status dropdown, date range)
+Sort controls (creation date, company A-Z, status)
+Grid/list view toggle
+Application cards with all details (job title, company, location, status, notes, dates)
+Empty state when no applications exist
+Loading states during data fetching
+Application Card Design Requirements
+Show job title as header
+Company and location as subtitle
+Color-coded status badges (matching ApplicationForm status colors)
+Created/updated dates
+Notes preview (truncated)
+Job link as clickable button
+Hover effects for interactivity
+Filter & Sort Implementation
+Filters: Text search for company, dropdown for status, optional date range picker
+Sorting: Dropdown with options (Newest First, Oldest First, Company A-Z, Company Z-A, Status)
+Real-time Updates: Filters and sorts should work instantly without page reload
+Clear Filters: Reset button to clear all filters
+Data Model Integration
+Use existing Firestore structure:
+
+interface Application {
+  id: string;
+  jobTitle: string;
+  company: string;
+  location?: string;
+  jobLink?: string;
+  status: 'to-apply' | 'applied' | 'interviewing' | 'offer' | 'rejected';
+  notes?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+Technical Requirements
+Use React hooks (useState, useEffect) for state management
+Implement Firestore real-time listeners with onSnapshot for live updates
+Responsive design - works on mobile and desktop
+Loading spinners during data fetch
+Error handling for Firebase connection issues
+TypeScript interfaces for type safety
+UI/UX Requirements
+Clean, professional design matching current ApplicationForm styling
+Consistent with existing blue color scheme (#3B82F6)
+Mobile-first responsive design
+Smooth transitions and hover effects
+Accessible form controls and buttons
+Clear visual hierarchy
+Success Criteria
+ApplicationForm opens when "Add Application" button is clicked
+New applications immediately appear in the list (real-time updates)
+All filters work correctly and update results instantly
+Sorting functions properly across all options
+Responsive design works on mobile devices
+No console errors or Firebase connection issues
+Professional, clean interface that feels like a real product
+Files to Modify
+pages/index.tsx - Complete replacement of current test code
+Optional: Create components/ApplicationCard.tsx if cards become complex
+Optional: Create components/FilterControls.tsx for filter UI organization
+Focus on creating a production-ready dashboard that showcases the full potential of the application tracking concept. This will be the main selling point that differentiates us from competitors.
+Agent is ready
+
+Ask questions, plan your work…
+
+
+AI
