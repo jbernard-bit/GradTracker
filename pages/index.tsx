@@ -533,8 +533,8 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* SECONDARY SECTIONS - Only show when there are applications */}
-        {!loading && !error && applications.length > 0 && (
+        {/* SECONDARY SECTIONS - Always visible but applications remain the primary focus */}
+        {!loading && !error && (
           <>
             {/* Modern Filter Controls */}
             <div className="bg-white rounded-xl p-8 mb-10 border border-slate-100" style={{ boxShadow: 'var(--shadow-md)' }}>
