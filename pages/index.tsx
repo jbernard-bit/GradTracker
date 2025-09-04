@@ -4,6 +4,7 @@ import { collection, onSnapshot, query, orderBy, doc, updateDoc, deleteDoc } fro
 import ApplicationForm from "../components/ApplicationForm";
 import ResumeUpload from "../components/ResumeUpload";
 import ResumesDisplay from "../components/ResumesDisplay";
+import ResumeInsights from "../components/ResumeInsights";
 
 // TypeScript interfaces
 interface Application {
@@ -686,6 +687,11 @@ export default function Dashboard() {
               </div>
               
               <ResumesDisplay applications={applications} />
+            </div>
+
+            {/* Resume Insights Dashboard */}
+            <div className="mb-10">
+              <ResumeInsights />
             </div>
 
           </>
