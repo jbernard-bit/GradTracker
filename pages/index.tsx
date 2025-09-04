@@ -63,7 +63,7 @@ export default function Dashboard() {
     setError(null);
 
     const q = query(collection(db, 'applications'), orderBy('createdAt', 'desc'));
-    
+
     const unsubscribe = onSnapshot(
       q,
       (querySnapshot) => {
@@ -178,9 +178,16 @@ export default function Dashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-8">
             <div>
-              <h1 className="text-4xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
-                GradTracker
-              </h1>
+              <div className="flex items-center mb-4">
+                <img 
+                  src="/logo.png" 
+                  alt="GradTracker Logo" 
+                  className="h-16 w-16 mr-3"
+                />
+                <h1 className="text-4xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
+                  GradTracker
+                </h1>
+              </div>
               <p className="text-lg mt-2" style={{ color: 'var(--color-text-secondary)' }}>
                 Track your job applications with ease
               </p>
