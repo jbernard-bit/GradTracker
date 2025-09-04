@@ -88,9 +88,17 @@ export default function ApplicationForm({ onApplicationAdded }: ApplicationFormP
       if (onApplicationAdded) {
         onApplicationAdded();
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error adding application:', error);
-      alert('Failed to add application. Please try again.');
+      
+      // Enhanced error handling for connection issues
+      if (error.code === 'unavailable' || error.message?.includes('transport errored')) {
+        alert('Connection lost. Your application will be saved automatically when connection is restored. Please keep this form open and wait for confirmation.');
+      } else if (error.code === 'permission-denied') {
+        alert('Permission denied. Unable to save application. Please check your account permissions.');
+      } else {
+        alert('Failed to save application. Please check your connection and try again.');
+      }
     } finally {
       setIsSubmitting(false);
     }

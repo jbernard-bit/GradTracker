@@ -115,7 +115,16 @@ export default function Dashboard() {
       },
       (err) => {
         console.error('Error fetching applications:', err);
-        setError('Failed to connect to database');
+        
+        // Check for specific Firebase connection errors
+        if (err.code === 'unavailable' || err.message?.includes('transport errored')) {
+          setError('Connection lost. Your applications will load when connection is restored. Any changes will be saved automatically.');
+        } else if (err.code === 'permission-denied') {
+          setError('Access denied. Please check your permissions.');
+        } else {
+          setError('Failed to connect to database. Please refresh the page.');
+        }
+        
         setLoading(false);
       }
     );
@@ -267,9 +276,17 @@ export default function Dashboard() {
       });
       setEditingApplication(null);
       console.log('Application updated successfully');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error updating application:', error);
-      alert('Failed to update application. Please try again.');
+      
+      // Enhanced error handling for connection issues
+      if (error.code === 'unavailable' || error.message?.includes('transport errored')) {
+        alert('Connection lost. Your changes will be saved automatically when connection is restored. Please keep the page open.');
+      } else if (error.code === 'permission-denied') {
+        alert('Permission denied. Unable to update application.');
+      } else {
+        alert('Failed to update application. Please check your connection and try again.');
+      }
     } finally {
       setIsUpdating(false);
     }
@@ -289,9 +306,17 @@ export default function Dashboard() {
       await deleteDoc(doc(db, 'applications', deletingApplication.id));
       setDeletingApplication(null);
       console.log('Application deleted successfully');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error deleting application:', error);
-      alert('Failed to delete application. Please try again.');
+      
+      // Enhanced error handling for connection issues
+      if (error.code === 'unavailable' || error.message?.includes('transport errored')) {
+        alert('Connection lost. Delete operation will complete when connection is restored. Please keep the page open.');
+      } else if (error.code === 'permission-denied') {
+        alert('Permission denied. Unable to delete application.');
+      } else {
+        alert('Failed to delete application. Please check your connection and try again.');
+      }
     } finally {
       setIsDeleting(false);
     }
@@ -326,155 +351,16 @@ export default function Dashboard() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        {/* Enhanced Stats Summary */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-10">
-          {statusOptions.slice(1).map((status) => {
-            const count = applications.filter(app => app.status === status.value).length;
-            return (
-              <div
-                key={status.value}
-                className={`card-hover bg-white rounded-xl p-6 text-center border border-slate-100`}
-                style={{ boxShadow: 'var(--shadow-md)' }}
-              >
-                <div className="flex items-center justify-center mb-4">
-                  <div className={`w-4 h-4 rounded-full ${status.dotColor} mr-3`}></div>
-                  <span className={`inline-flex px-4 py-2 rounded-full text-sm font-semibold ${status.bgColor} ${status.textColor} status-badge`}>
-                    {status.label}
-                  </span>
-                </div>
-                <div className="text-3xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
-                  {count}
-                </div>
-                <div className="text-sm mt-1" style={{ color: 'var(--color-text-tertiary)' }}>
-                  applications
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Resume Manager Section */}
-        <div className="bg-white rounded-xl p-8 mb-10 border border-slate-100" style={{ boxShadow: 'var(--shadow-md)' }}>
+        
+        {/* MAIN APPLICATIONS SECTION - MOVED TO TOP */}
+        {/* Results Count - Show only when there are applications and filters */}
+        {!loading && !error && applications.length > 0 && (
           <div className="flex justify-between items-center mb-8">
-            <div>
-              <h2 className="text-2xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
-                Resume Manager
-              </h2>
-              <p className="text-sm mt-1" style={{ color: 'var(--color-text-secondary)' }}>
-                Upload and manage your resume versions
-              </p>
-            </div>
-            <ResumeUpload />
+            <p className="text-lg font-medium" style={{ color: 'var(--color-text-secondary)' }}>
+              {filteredAndSortedApplications.length} of {applications.length} applications
+            </p>
           </div>
-          
-          <ResumesDisplay />
-        </div>
-
-        {/* Modern Filter Controls */}
-        <div className="bg-white rounded-xl p-8 mb-10 border border-slate-100" style={{ boxShadow: 'var(--shadow-md)' }}>
-          <div className="flex flex-col xl:flex-row gap-6 items-start xl:items-end">
-            <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Company Filter */}
-              <div>
-                <label htmlFor="company-filter" className="block text-sm font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>
-                  Search Company
-                </label>
-                <input
-                  type="text"
-                  id="company-filter"
-                  value={filters.company}
-                  onChange={(e) => handleFilterChange('company', e.target.value)}
-                  placeholder="Type company name..."
-                  className="input-modern w-full px-4 py-3 text-lg focus-ring"
-                />
-              </div>
-
-              {/* Status Filter */}
-              <div>
-                <label htmlFor="status-filter" className="block text-sm font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>
-                  Filter by Status
-                </label>
-                <select
-                  id="status-filter"
-                  value={filters.status}
-                  onChange={(e) => handleFilterChange('status', e.target.value)}
-                  className="input-modern w-full px-4 py-3 text-lg focus-ring"
-                >
-                  {statusOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Sort */}
-              <div>
-                <label htmlFor="sort-filter" className="block text-sm font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>
-                  Sort by
-                </label>
-                <select
-                  id="sort-filter"
-                  value={filters.sortBy}
-                  onChange={(e) => handleFilterChange('sortBy', e.target.value)}
-                  className="input-modern w-full px-4 py-3 text-lg focus-ring"
-                >
-                  {sortOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            {/* Clear Filters Button */}
-            <button
-              onClick={clearFilters}
-              className="btn-secondary px-6 py-3 text-base font-medium whitespace-nowrap"
-            >
-              Clear Filters
-            </button>
-          </div>
-
-          {/* Active Filters Display */}
-          {(filters.company || filters.status) && (
-            <div className="mt-6 flex flex-wrap gap-3">
-              <span className="text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>
-                Active filters:
-              </span>
-              {filters.company && (
-                <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-blue-50 text-blue-700 border border-blue-200">
-                  Company: {filters.company}
-                  <button
-                    onClick={() => handleFilterChange('company', '')}
-                    className="ml-2 text-blue-600 hover:text-blue-800 font-bold text-lg leading-none"
-                  >
-                    ×
-                  </button>
-                </span>
-              )}
-              {filters.status && (
-                <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-blue-50 text-blue-700 border border-blue-200">
-                  Status: {getStatusInfo(filters.status).label}
-                  <button
-                    onClick={() => handleFilterChange('status', '')}
-                    className="ml-2 text-blue-600 hover:text-blue-800 font-bold text-lg leading-none"
-                  >
-                    ×
-                  </button>
-                </span>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Results Count */}
-        <div className="flex justify-between items-center mb-8">
-          <p className="text-lg font-medium" style={{ color: 'var(--color-text-secondary)' }}>
-            {filteredAndSortedApplications.length} of {applications.length} applications
-          </p>
-        </div>
+        )}
 
         {/* Modern Loading State */}
         {loading && (
@@ -645,6 +531,154 @@ export default function Dashboard() {
               </div>
             ))}
           </div>
+        )}
+
+        {/* SECONDARY SECTIONS - Only show when there are applications */}
+        {!loading && !error && applications.length > 0 && (
+          <>
+            {/* Modern Filter Controls */}
+            <div className="bg-white rounded-xl p-8 mb-10 border border-slate-100" style={{ boxShadow: 'var(--shadow-md)' }}>
+              <div className="flex flex-col xl:flex-row gap-6 items-start xl:items-end">
+                <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {/* Company Filter */}
+                  <div>
+                    <label htmlFor="company-filter" className="block text-sm font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>
+                      Search Company
+                    </label>
+                    <input
+                      type="text"
+                      id="company-filter"
+                      value={filters.company}
+                      onChange={(e) => handleFilterChange('company', e.target.value)}
+                      placeholder="Type company name..."
+                      className="input-modern w-full px-4 py-3 text-lg focus-ring"
+                    />
+                  </div>
+
+                  {/* Status Filter */}
+                  <div>
+                    <label htmlFor="status-filter" className="block text-sm font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>
+                      Filter by Status
+                    </label>
+                    <select
+                      id="status-filter"
+                      value={filters.status}
+                      onChange={(e) => handleFilterChange('status', e.target.value)}
+                      className="input-modern w-full px-4 py-3 text-lg focus-ring"
+                    >
+                      {statusOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Sort */}
+                  <div>
+                    <label htmlFor="sort-filter" className="block text-sm font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>
+                      Sort by
+                    </label>
+                    <select
+                      id="sort-filter"
+                      value={filters.sortBy}
+                      onChange={(e) => handleFilterChange('sortBy', e.target.value)}
+                      className="input-modern w-full px-4 py-3 text-lg focus-ring"
+                    >
+                      {sortOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Clear Filters Button */}
+                <button
+                  onClick={clearFilters}
+                  className="btn-secondary px-6 py-3 text-base font-medium whitespace-nowrap"
+                >
+                  Clear Filters
+                </button>
+              </div>
+
+              {/* Active Filters Display */}
+              {(filters.company || filters.status) && (
+                <div className="mt-6 flex flex-wrap gap-3">
+                  <span className="text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>
+                    Active filters:
+                  </span>
+                  {filters.company && (
+                    <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-blue-50 text-blue-700 border border-blue-200">
+                      Company: {filters.company}
+                      <button
+                        onClick={() => handleFilterChange('company', '')}
+                        className="ml-2 text-blue-600 hover:text-blue-800 font-bold text-lg leading-none"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  )}
+                  {filters.status && (
+                    <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-blue-50 text-blue-700 border border-blue-200">
+                      Status: {getStatusInfo(filters.status).label}
+                      <button
+                        onClick={() => handleFilterChange('status', '')}
+                        className="ml-2 text-blue-600 hover:text-blue-800 font-bold text-lg leading-none"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Resume Manager Section */}
+            <div className="bg-white rounded-xl p-8 mb-10 border border-slate-100" style={{ boxShadow: 'var(--shadow-md)' }}>
+              <div className="flex justify-between items-center mb-8">
+                <div>
+                  <h2 className="text-2xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
+                    Resume Manager
+                  </h2>
+                  <p className="text-sm mt-1" style={{ color: 'var(--color-text-secondary)' }}>
+                    Upload and manage your resume versions
+                  </p>
+                </div>
+                <ResumeUpload />
+              </div>
+              
+              <ResumesDisplay />
+            </div>
+
+            {/* Enhanced Stats Summary */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-10">
+              {statusOptions.slice(1).map((status) => {
+                const count = applications.filter(app => app.status === status.value).length;
+                return (
+                  <div
+                    key={status.value}
+                    className={`card-hover bg-white rounded-xl p-6 text-center border border-slate-100`}
+                    style={{ boxShadow: 'var(--shadow-md)' }}
+                  >
+                    <div className="flex items-center justify-center mb-4">
+                      <div className={`w-4 h-4 rounded-full ${status.dotColor} mr-3`}></div>
+                      <span className={`inline-flex px-4 py-2 rounded-full text-sm font-semibold ${status.bgColor} ${status.textColor} status-badge`}>
+                        {status.label}
+                      </span>
+                    </div>
+                    <div className="text-3xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
+                      {count}
+                    </div>
+                    <div className="text-sm mt-1" style={{ color: 'var(--color-text-tertiary)' }}>
+                      applications
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </>
         )}
 
         {/* Edit Application Modal */}

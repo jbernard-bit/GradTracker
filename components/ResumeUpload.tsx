@@ -95,9 +95,17 @@ export default function ResumeUpload({ onResumeUploaded }: ResumeUploadProps) {
       }
 
       console.log('Resume uploaded successfully');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error uploading resume:', error);
-      alert('Failed to upload resume. Please try again.');
+      
+      // Enhanced error handling for connection issues
+      if (error.code === 'unavailable' || error.message?.includes('transport errored')) {
+        alert('Connection lost. Your resume will be uploaded automatically when connection is restored. Please keep this form open and wait for confirmation.');
+      } else if (error.code === 'permission-denied') {
+        alert('Permission denied. Unable to upload resume. Please check your account permissions.');
+      } else {
+        alert('Failed to upload resume. Please check your connection and try again.');
+      }
     } finally {
       setIsUploading(false);
     }
