@@ -341,7 +341,7 @@ export default function Dashboard() {
               <img 
                 src="/logo.png" 
                 alt="GradTracker Logo" 
-                className="w-16 h-16 object-contain"
+                className="w-10 h-10 object-contain"
               />
               <div>
                 <h1 className="text-4xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
