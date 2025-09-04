@@ -1,21 +1,28 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { db } from '../lib/firebase';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, onSnapshot, query, orderBy } from 'firebase/firestore';
 
 interface ApplicationFormProps {
   onApplicationAdded?: () => void;
 }
 
+interface Resume {
+  id: string;
+  name: string;
+}
+
 export default function ApplicationForm({ onApplicationAdded }: ApplicationFormProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [resumes, setResumes] = useState<Resume[]>([]);
   const [formData, setFormData] = useState({
     jobTitle: '',
     company: '',
     location: '',
     jobLink: '',
     status: 'to-apply',
-    notes: ''
+    notes: '',
+    resumeId: ''
   });
 
   const statusOptions = [
@@ -25,6 +32,26 @@ export default function ApplicationForm({ onApplicationAdded }: ApplicationFormP
     { value: 'offer', label: 'Offer', bgColor: 'bg-emerald-50', textColor: 'text-emerald-700', dotColor: 'bg-emerald-500' },
     { value: 'rejected', label: 'Rejected', bgColor: 'bg-red-50', textColor: 'text-red-700', dotColor: 'bg-red-500' }
   ];
+
+  // Fetch resumes on component mount
+  useEffect(() => {
+    const q = query(collection(db, 'resumes'), orderBy('uploadDate', 'desc'));
+    
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const resumeData: Resume[] = [];
+      snapshot.forEach((doc) => {
+        resumeData.push({
+          id: doc.id,
+          name: doc.data().name
+        });
+      });
+      setResumes(resumeData);
+    }, (error) => {
+      console.error('Error fetching resumes:', error);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
@@ -40,6 +67,7 @@ export default function ApplicationForm({ onApplicationAdded }: ApplicationFormP
     try {
       await addDoc(collection(db, 'applications'), {
         ...formData,
+        resumeId: formData.resumeId || null, // Store null if no resume selected
         createdAt: new Date(),
         updatedAt: new Date()
       });
@@ -51,7 +79,8 @@ export default function ApplicationForm({ onApplicationAdded }: ApplicationFormP
         location: '',
         jobLink: '',
         status: 'to-apply',
-        notes: ''
+        notes: '',
+        resumeId: ''
       });
 
       setIsOpen(false);
@@ -75,7 +104,8 @@ export default function ApplicationForm({ onApplicationAdded }: ApplicationFormP
       location: '',
       jobLink: '',
       status: 'to-apply',
-      notes: ''
+      notes: '',
+      resumeId: ''
     });
   };
 
@@ -214,6 +244,49 @@ export default function ApplicationForm({ onApplicationAdded }: ApplicationFormP
                           <span className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold ${selectedStatus.bgColor} ${selectedStatus.textColor} status-badge`}>
                             <div className={`w-2 h-2 rounded-full ${selectedStatus.dotColor} mr-2`}></div>
                             {selectedStatus.label}
+                          </span>
+                        ) : null;
+                      })()}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Resume Selection */}
+              <div>
+                <label htmlFor="resumeId" className="block text-sm font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>
+                  Resume Used <span className="text-sm font-normal" style={{ color: 'var(--color-text-secondary)' }}>(Optional)</span>
+                </label>
+                <select
+                  id="resumeId"
+                  name="resumeId"
+                  value={formData.resumeId}
+                  onChange={handleInputChange}
+                  className="input-modern w-full px-4 py-3 text-lg focus-ring"
+                >
+                  <option value="">None - No resume attached</option>
+                  {resumes.map((resume) => (
+                    <option key={resume.id} value={resume.id}>
+                      {resume.name}
+                    </option>
+                  ))}
+                </select>
+                
+                {/* Resume Preview */}
+                {formData.resumeId && (
+                  <div className="mt-3">
+                    <span className="text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>
+                      Selected:
+                    </span>
+                    <div className="mt-2">
+                      {(() => {
+                        const selectedResume = resumes.find(resume => resume.id === formData.resumeId);
+                        return selectedResume ? (
+                          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-50 text-blue-700 border border-blue-200">
+                            <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+                            </svg>
+                            {selectedResume.name}
                           </span>
                         ) : null;
                       })()}

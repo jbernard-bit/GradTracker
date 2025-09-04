@@ -14,6 +14,7 @@ interface Application {
   jobLink?: string;
   status: 'to-apply' | 'applied' | 'interviewing' | 'offer' | 'rejected';
   notes?: string;
+  resumeId?: string; // Optional reference to resume
   createdAt: any; // Firebase Timestamp
   updatedAt: any; // Firebase Timestamp
 }
@@ -32,8 +33,14 @@ type StatusOption = {
   dotColor: string;
 };
 
+interface Resume {
+  id: string;
+  name: string;
+}
+
 export default function Dashboard() {
   const [applications, setApplications] = useState<Application[]>([]);
+  const [resumes, setResumes] = useState<Resume[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<FilterState>({
@@ -52,13 +59,15 @@ export default function Dashboard() {
     jobLink: string;
     status: 'to-apply' | 'applied' | 'interviewing' | 'offer' | 'rejected';
     notes: string;
+    resumeId: string;
   }>({
     jobTitle: '',
     company: '',
     location: '',
     jobLink: '',
     status: 'to-apply',
-    notes: ''
+    notes: '',
+    resumeId: ''
   });
 
   const statusOptions: StatusOption[] = [
@@ -113,6 +122,32 @@ export default function Dashboard() {
 
     return () => unsubscribe();
   }, []);
+
+  // Fetch resumes from Firebase
+  useEffect(() => {
+    const q = query(collection(db, 'resumes'), orderBy('uploadDate', 'desc'));
+    
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const resumeData: Resume[] = [];
+      snapshot.forEach((doc) => {
+        resumeData.push({
+          id: doc.id,
+          name: doc.data().name
+        });
+      });
+      setResumes(resumeData);
+    }, (error) => {
+      console.error('Error fetching resumes:', error);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // Helper function to get resume name by ID
+  const getResumeName = (resumeId: string): string | null => {
+    const resume = resumes.find(r => r.id === resumeId);
+    return resume ? resume.name : null;
+  };
 
   // Filtered and sorted applications
   const filteredAndSortedApplications = useMemo(() => {
@@ -201,7 +236,8 @@ export default function Dashboard() {
       location: application.location || '',
       jobLink: application.jobLink || '',
       status: application.status,
-      notes: application.notes || ''
+      notes: application.notes || '',
+      resumeId: application.resumeId || ''
     });
   };
 
@@ -527,6 +563,18 @@ export default function Dashboard() {
                         {app.location}
                       </p>
                     )}
+                    
+                    {/* Resume Badge */}
+                    {app.resumeId && getResumeName(app.resumeId) && (
+                      <div className="mt-2">
+                        <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
+                          <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+                          </svg>
+                          {getResumeName(app.resumeId)}
+                        </span>
+                      </div>
+                    )}
                   </div>
                   <div className="flex-shrink-0">
                     <div className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold ${getStatusInfo(app.status).bgColor} ${getStatusInfo(app.status).textColor} status-badge`}>
@@ -725,6 +773,49 @@ export default function Dashboard() {
                       })()}
                     </div>
                   </div>
+                </div>
+
+                {/* Resume Selection */}
+                <div>
+                  <label htmlFor="edit-resumeId" className="block text-sm font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>
+                    Resume Used <span className="text-sm font-normal" style={{ color: 'var(--color-text-secondary)' }}>(Optional)</span>
+                  </label>
+                  <select
+                    id="edit-resumeId"
+                    name="resumeId"
+                    value={editFormData.resumeId}
+                    onChange={handleEditInputChange}
+                    className="input-modern w-full px-4 py-3 text-lg focus-ring"
+                  >
+                    <option value="">None - No resume attached</option>
+                    {resumes.map((resume) => (
+                      <option key={resume.id} value={resume.id}>
+                        {resume.name}
+                      </option>
+                    ))}
+                  </select>
+                  
+                  {/* Resume Preview */}
+                  {editFormData.resumeId && (
+                    <div className="mt-3">
+                      <span className="text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>
+                        Selected:
+                      </span>
+                      <div className="mt-2">
+                        {(() => {
+                          const selectedResume = resumes.find(resume => resume.id === editFormData.resumeId);
+                          return selectedResume ? (
+                            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-50 text-blue-700 border border-blue-200">
+                              <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+                              </svg>
+                              {selectedResume.name}
+                            </span>
+                          ) : null;
+                        })()}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Enhanced Notes */}
