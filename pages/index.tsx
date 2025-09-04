@@ -685,7 +685,7 @@ export default function Dashboard() {
                 <ResumeUpload />
               </div>
               
-              <ResumesDisplay />
+              <ResumesDisplay applications={applications} />
             </div>
 
           </>
