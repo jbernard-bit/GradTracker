@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { db } from '../lib/firebase';
 import { collection, addDoc } from 'firebase/firestore';
@@ -20,11 +19,11 @@ export default function ApplicationForm({ onApplicationAdded }: ApplicationFormP
   });
 
   const statusOptions = [
-    { value: 'to-apply', label: 'To Apply', color: 'bg-gray-100 text-gray-800' },
-    { value: 'applied', label: 'Applied', color: 'bg-blue-100 text-blue-800' },
-    { value: 'interviewing', label: 'Interviewing', color: 'bg-yellow-100 text-yellow-800' },
-    { value: 'offer', label: 'Offer', color: 'bg-green-100 text-green-800' },
-    { value: 'rejected', label: 'Rejected', color: 'bg-red-100 text-red-800' }
+    { value: 'to-apply', label: 'To Apply', bgColor: 'bg-slate-50', textColor: 'text-slate-700', dotColor: 'bg-slate-400' },
+    { value: 'applied', label: 'Applied', bgColor: 'bg-blue-50', textColor: 'text-blue-700', dotColor: 'bg-blue-500' },
+    { value: 'interviewing', label: 'Interviewing', bgColor: 'bg-amber-50', textColor: 'text-amber-700', dotColor: 'bg-amber-500' },
+    { value: 'offer', label: 'Offer', bgColor: 'bg-emerald-50', textColor: 'text-emerald-700', dotColor: 'bg-emerald-500' },
+    { value: 'rejected', label: 'Rejected', bgColor: 'bg-red-50', textColor: 'text-red-700', dotColor: 'bg-red-500' }
   ];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -82,29 +81,41 @@ export default function ApplicationForm({ onApplicationAdded }: ApplicationFormP
 
   return (
     <>
-      {/* Add Application Button */}
+      {/* Modern Add Application Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-200 flex items-center gap-2"
+        className="btn-primary px-8 py-4 text-lg font-semibold flex items-center gap-3 shadow-lg"
+        style={{ boxShadow: 'var(--shadow-lg)' }}
       >
-        <span className="text-xl">+</span>
+        <span className="text-2xl font-light">+</span>
         Add Application
       </button>
 
-      {/* Modal Overlay */}
+      {/* Enhanced Modal Overlay */}
       {isOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            {/* Modal Header */}
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-2xl font-bold text-gray-800">Add New Application</h2>
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 backdrop-blur-sm"
+          style={{ backdropFilter: 'blur(8px)' }}
+        >
+          <div 
+            className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-slate-200"
+            style={{ boxShadow: 'var(--shadow-xl)' }}
+          >
+            {/* Enhanced Modal Header */}
+            <div className="px-8 py-6 border-b border-slate-200 bg-gradient-to-r from-blue-50 to-slate-50">
+              <h2 className="text-3xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
+                Add New Application
+              </h2>
+              <p className="text-lg mt-2" style={{ color: 'var(--color-text-secondary)' }}>
+                Track a new job opportunity
+              </p>
             </div>
 
-            {/* Modal Body */}
-            <form onSubmit={handleSubmit} className="px-6 py-4 space-y-6">
+            {/* Enhanced Modal Body */}
+            <form onSubmit={handleSubmit} className="px-8 py-8 space-y-8">
               {/* Job Title */}
               <div>
-                <label htmlFor="jobTitle" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="jobTitle" className="block text-sm font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>
                   Job Title *
                 </label>
                 <input
@@ -114,14 +125,14 @@ export default function ApplicationForm({ onApplicationAdded }: ApplicationFormP
                   value={formData.jobTitle}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="input-modern w-full px-4 py-3 text-lg focus-ring"
                   placeholder="e.g. Frontend Developer"
                 />
               </div>
 
               {/* Company */}
               <div>
-                <label htmlFor="company" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="company" className="block text-sm font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>
                   Company *
                 </label>
                 <input
@@ -131,46 +142,49 @@ export default function ApplicationForm({ onApplicationAdded }: ApplicationFormP
                   value={formData.company}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="input-modern w-full px-4 py-3 text-lg focus-ring"
                   placeholder="e.g. Google"
                 />
               </div>
 
-              {/* Location */}
-              <div>
-                <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-2">
-                  Location
-                </label>
-                <input
-                  type="text"
-                  id="location"
-                  name="location"
-                  value={formData.location}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="e.g. San Francisco, CA / Remote"
-                />
+              {/* Location and Job Link Row */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Location */}
+                <div>
+                  <label htmlFor="location" className="block text-sm font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>
+                    Location
+                  </label>
+                  <input
+                    type="text"
+                    id="location"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleInputChange}
+                    className="input-modern w-full px-4 py-3 text-lg focus-ring"
+                    placeholder="San Francisco, CA / Remote"
+                  />
+                </div>
+
+                {/* Job Link */}
+                <div>
+                  <label htmlFor="jobLink" className="block text-sm font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>
+                    Job Link
+                  </label>
+                  <input
+                    type="url"
+                    id="jobLink"
+                    name="jobLink"
+                    value={formData.jobLink}
+                    onChange={handleInputChange}
+                    className="input-modern w-full px-4 py-3 text-lg focus-ring"
+                    placeholder="https://..."
+                  />
+                </div>
               </div>
 
-              {/* Job Link */}
+              {/* Enhanced Status */}
               <div>
-                <label htmlFor="jobLink" className="block text-sm font-medium text-gray-700 mb-2">
-                  Job Link
-                </label>
-                <input
-                  type="url"
-                  id="jobLink"
-                  name="jobLink"
-                  value={formData.jobLink}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="https://..."
-                />
-              </div>
-
-              {/* Status */}
-              <div>
-                <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="status" className="block text-sm font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>
                   Status
                 </label>
                 <select
@@ -178,7 +192,7 @@ export default function ApplicationForm({ onApplicationAdded }: ApplicationFormP
                   name="status"
                   value={formData.status}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="input-modern w-full px-4 py-3 text-lg focus-ring"
                 >
                   {statusOptions.map((option) => (
                     <option key={option.value} value={option.value}>
@@ -186,11 +200,31 @@ export default function ApplicationForm({ onApplicationAdded }: ApplicationFormP
                     </option>
                   ))}
                 </select>
+                
+                {/* Status Preview */}
+                {formData.status && (
+                  <div className="mt-3">
+                    <span className="text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>
+                      Preview:
+                    </span>
+                    <div className="mt-2">
+                      {(() => {
+                        const selectedStatus = statusOptions.find(opt => opt.value === formData.status);
+                        return selectedStatus ? (
+                          <span className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold ${selectedStatus.bgColor} ${selectedStatus.textColor} status-badge`}>
+                            <div className={`w-2 h-2 rounded-full ${selectedStatus.dotColor} mr-2`}></div>
+                            {selectedStatus.label}
+                          </span>
+                        ) : null;
+                      })()}
+                    </div>
+                  </div>
+                )}
               </div>
 
-              {/* Notes */}
+              {/* Enhanced Notes */}
               <div>
-                <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="notes" className="block text-sm font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>
                   Notes
                 </label>
                 <textarea
@@ -198,28 +232,38 @@ export default function ApplicationForm({ onApplicationAdded }: ApplicationFormP
                   name="notes"
                   value={formData.notes}
                   onChange={handleInputChange}
-                  rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                  placeholder="Add any additional notes..."
+                  rows={5}
+                  className="input-modern w-full px-4 py-3 text-lg focus-ring resize-none"
+                  placeholder="Add any additional notes, requirements, or thoughts about this position..."
                 />
+                <div className="mt-2 text-xs" style={{ color: 'var(--color-text-tertiary)' }}>
+                  {formData.notes.length}/500 characters
+                </div>
               </div>
 
-              {/* Modal Footer */}
-              <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+              {/* Enhanced Modal Footer */}
+              <div className="flex justify-end gap-4 pt-6 border-t border-slate-200">
                 <button
                   type="button"
                   onClick={handleCancel}
-                  className="px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-md transition duration-200"
+                  className="btn-secondary px-6 py-3 text-base font-medium"
                   disabled={isSubmitting}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  disabled={isSubmitting}
-                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={isSubmitting || !formData.jobTitle.trim() || !formData.company.trim()}
+                  className="btn-primary px-8 py-3 text-base font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isSubmitting ? 'Adding...' : 'Add Application'}
+                  {isSubmitting ? (
+                    <span className="flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      Adding...
+                    </span>
+                  ) : (
+                    'Add Application'
+                  )}
                 </button>
               </div>
             </form>

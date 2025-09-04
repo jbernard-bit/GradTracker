@@ -25,7 +25,9 @@ interface FilterState {
 type StatusOption = {
   value: string;
   label: string;
-  color: string;
+  bgColor: string;
+  textColor: string;
+  dotColor: string;
 };
 
 export default function Dashboard() {
@@ -39,12 +41,12 @@ export default function Dashboard() {
   });
 
   const statusOptions: StatusOption[] = [
-    { value: '', label: 'All Status', color: '' },
-    { value: 'to-apply', label: 'To Apply', color: 'bg-gray-100 text-gray-800' },
-    { value: 'applied', label: 'Applied', color: 'bg-blue-100 text-blue-800' },
-    { value: 'interviewing', label: 'Interviewing', color: 'bg-yellow-100 text-yellow-800' },
-    { value: 'offer', label: 'Offer', color: 'bg-green-100 text-green-800' },
-    { value: 'rejected', label: 'Rejected', color: 'bg-red-100 text-red-800' }
+    { value: '', label: 'All Status', bgColor: '', textColor: '', dotColor: '' },
+    { value: 'to-apply', label: 'To Apply', bgColor: 'bg-slate-50', textColor: 'text-slate-700', dotColor: 'bg-slate-400' },
+    { value: 'applied', label: 'Applied', bgColor: 'bg-blue-50', textColor: 'text-blue-700', dotColor: 'bg-blue-500' },
+    { value: 'interviewing', label: 'Interviewing', bgColor: 'bg-amber-50', textColor: 'text-amber-700', dotColor: 'bg-amber-500' },
+    { value: 'offer', label: 'Offer', bgColor: 'bg-emerald-50', textColor: 'text-emerald-700', dotColor: 'bg-emerald-500' },
+    { value: 'rejected', label: 'Rejected', bgColor: 'bg-red-50', textColor: 'text-red-700', dotColor: 'bg-red-500' }
   ];
 
   const sortOptions = [
@@ -155,7 +157,7 @@ export default function Dashboard() {
   // Get status display info
   const getStatusInfo = (status: string) => {
     const statusOption = statusOptions.find(opt => opt.value === status);
-    return statusOption || { label: status, color: 'bg-gray-100 text-gray-800' };
+    return statusOption || { label: status, bgColor: 'bg-slate-50', textColor: 'text-slate-700', dotColor: 'bg-slate-400' };
   };
 
   // Truncate text
@@ -170,43 +172,59 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--color-background)' }}>
+      {/* Modern Header */}
+      <div className="bg-white border-b border-slate-200" style={{ boxShadow: 'var(--shadow-sm)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
+          <div className="flex justify-between items-center py-8">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">GradTracker</h1>
-              <p className="text-gray-600 mt-1">Track your job applications with ease</p>
+              <h1 className="text-4xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
+                GradTracker
+              </h1>
+              <p className="text-lg mt-2" style={{ color: 'var(--color-text-secondary)' }}>
+                Your modern job application tracking dashboard
+              </p>
             </div>
             <ApplicationForm onApplicationAdded={handleApplicationAdded} />
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Stats Summary */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        {/* Enhanced Stats Summary */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-10">
           {statusOptions.slice(1).map((status) => {
             const count = applications.filter(app => app.status === status.value).length;
             return (
-              <div key={status.value} className="bg-white rounded-lg shadow p-4 text-center">
-                <div className={`inline-flex px-3 py-1 rounded-full text-sm font-medium ${status.color} mb-2`}>
-                  {status.label}
+              <div
+                key={status.value}
+                className={`card-hover bg-white rounded-xl p-6 text-center border border-slate-100`}
+                style={{ boxShadow: 'var(--shadow-md)' }}
+              >
+                <div className="flex items-center justify-center mb-4">
+                  <div className={`w-4 h-4 rounded-full ${status.dotColor} mr-3`}></div>
+                  <span className={`inline-flex px-4 py-2 rounded-full text-sm font-semibold ${status.bgColor} ${status.textColor} status-badge`}>
+                    {status.label}
+                  </span>
                 </div>
-                <div className="text-2xl font-bold text-gray-900">{count}</div>
+                <div className="text-3xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
+                  {count}
+                </div>
+                <div className="text-sm mt-1" style={{ color: 'var(--color-text-tertiary)' }}>
+                  applications
+                </div>
               </div>
             );
           })}
         </div>
 
-        {/* Filter Controls */}
-        <div className="bg-white rounded-lg shadow p-6 mb-8">
-          <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center">
-            <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Modern Filter Controls */}
+        <div className="bg-white rounded-xl p-8 mb-10 border border-slate-100" style={{ boxShadow: 'var(--shadow-md)' }}>
+          <div className="flex flex-col xl:flex-row gap-6 items-start xl:items-end">
+            <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Company Filter */}
               <div>
-                <label htmlFor="company-filter" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="company-filter" className="block text-sm font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>
                   Search Company
                 </label>
                 <input
@@ -215,20 +233,20 @@ export default function Dashboard() {
                   value={filters.company}
                   onChange={(e) => handleFilterChange('company', e.target.value)}
                   placeholder="Type company name..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="input-modern w-full px-4 py-3 text-lg focus-ring"
                 />
               </div>
 
               {/* Status Filter */}
               <div>
-                <label htmlFor="status-filter" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="status-filter" className="block text-sm font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>
                   Filter by Status
                 </label>
                 <select
                   id="status-filter"
                   value={filters.status}
                   onChange={(e) => handleFilterChange('status', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="input-modern w-full px-4 py-3 text-lg focus-ring"
                 >
                   {statusOptions.map((option) => (
                     <option key={option.value} value={option.value}>
@@ -240,14 +258,14 @@ export default function Dashboard() {
 
               {/* Sort */}
               <div>
-                <label htmlFor="sort-filter" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="sort-filter" className="block text-sm font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>
                   Sort by
                 </label>
                 <select
                   id="sort-filter"
                   value={filters.sortBy}
                   onChange={(e) => handleFilterChange('sortBy', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="input-modern w-full px-4 py-3 text-lg focus-ring"
                 >
                   {sortOptions.map((option) => (
                     <option key={option.value} value={option.value}>
@@ -261,7 +279,7 @@ export default function Dashboard() {
             {/* Clear Filters Button */}
             <button
               onClick={clearFilters}
-              className="px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-md transition duration-200 whitespace-nowrap"
+              className="btn-secondary px-6 py-3 text-base font-medium whitespace-nowrap"
             >
               Clear Filters
             </button>
@@ -269,25 +287,27 @@ export default function Dashboard() {
 
           {/* Active Filters Display */}
           {(filters.company || filters.status) && (
-            <div className="mt-4 flex flex-wrap gap-2">
-              <span className="text-sm text-gray-500">Active filters:</span>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <span className="text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>
+                Active filters:
+              </span>
               {filters.company && (
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-blue-50 text-blue-700 border border-blue-200">
                   Company: {filters.company}
                   <button
                     onClick={() => handleFilterChange('company', '')}
-                    className="ml-2 text-blue-600 hover:text-blue-800"
+                    className="ml-2 text-blue-600 hover:text-blue-800 font-bold text-lg leading-none"
                   >
                     ×
                   </button>
                 </span>
               )}
               {filters.status && (
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-blue-50 text-blue-700 border border-blue-200">
                   Status: {getStatusInfo(filters.status).label}
                   <button
                     onClick={() => handleFilterChange('status', '')}
-                    className="ml-2 text-blue-600 hover:text-blue-800"
+                    className="ml-2 text-blue-600 hover:text-blue-800 font-bold text-lg leading-none"
                   >
                     ×
                   </button>
@@ -298,97 +318,132 @@ export default function Dashboard() {
         </div>
 
         {/* Results Count */}
-        <div className="flex justify-between items-center mb-6">
-          <p className="text-gray-600">
+        <div className="flex justify-between items-center mb-8">
+          <p className="text-lg font-medium" style={{ color: 'var(--color-text-secondary)' }}>
             {filteredAndSortedApplications.length} of {applications.length} applications
           </p>
         </div>
 
-        {/* Loading State */}
+        {/* Modern Loading State */}
         {loading && (
-          <div className="flex justify-center items-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-            <span className="ml-3 text-gray-600">Loading applications...</span>
+          <div className="flex justify-center items-center py-20">
+            <div className="flex items-center space-x-4">
+              <div className="w-6 h-6 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+              <span className="text-lg font-medium" style={{ color: 'var(--color-text-secondary)' }}>
+                Loading applications...
+              </span>
+            </div>
           </div>
         )}
 
-        {/* Error State */}
+        {/* Enhanced Error State */}
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-            <p className="text-red-600">⚠️ {error}</p>
-            <button 
-              onClick={() => window.location.reload()} 
-              className="mt-2 text-red-600 hover:text-red-800 underline"
-            >
-              Try again
-            </button>
+          <div className="bg-red-50 border-2 border-red-200 rounded-xl p-6 mb-8">
+            <div className="flex items-center">
+              <div className="text-red-500 text-2xl mr-4">⚠️</div>
+              <div>
+                <p className="text-red-700 font-semibold text-lg">{error}</p>
+                <button 
+                  onClick={() => window.location.reload()} 
+                  className="mt-3 text-red-600 hover:text-red-800 underline font-medium"
+                >
+                  Try again
+                </button>
+              </div>
+            </div>
           </div>
         )}
 
-        {/* Empty State */}
+        {/* Enhanced Empty State */}
         {!loading && !error && filteredAndSortedApplications.length === 0 && applications.length === 0 && (
-          <div className="text-center py-12">
-            <div className="text-6xl mb-4">📝</div>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-2">No applications yet</h2>
-            <p className="text-gray-600 mb-6">Get started by adding your first job application!</p>
+          <div className="text-center py-20">
+            <div className="text-8xl mb-6">📝</div>
+            <h2 className="text-3xl font-bold mb-4" style={{ color: 'var(--color-text-primary)' }}>
+              No applications yet
+            </h2>
+            <p className="text-xl mb-8" style={{ color: 'var(--color-text-secondary)' }}>
+              Get started by adding your first job application!
+            </p>
             <ApplicationForm onApplicationAdded={handleApplicationAdded} />
           </div>
         )}
 
-        {/* No Results State */}
+        {/* Enhanced No Results State */}
         {!loading && !error && filteredAndSortedApplications.length === 0 && applications.length > 0 && (
-          <div className="text-center py-12">
-            <div className="text-6xl mb-4">🔍</div>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-2">No matching applications</h2>
-            <p className="text-gray-600 mb-4">Try adjusting your filters to see more results.</p>
+          <div className="text-center py-20">
+            <div className="text-8xl mb-6">🔍</div>
+            <h2 className="text-3xl font-bold mb-4" style={{ color: 'var(--color-text-primary)' }}>
+              No matching applications
+            </h2>
+            <p className="text-xl mb-8" style={{ color: 'var(--color-text-secondary)' }}>
+              Try adjusting your filters to see more results.
+            </p>
             <button
               onClick={clearFilters}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200"
+              className="btn-primary px-8 py-4 text-lg font-semibold"
             >
               Clear all filters
             </button>
           </div>
         )}
 
-        {/* Applications Grid */}
+        {/* Enhanced Applications Grid */}
         {!loading && !error && filteredAndSortedApplications.length > 0 && (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
             {filteredAndSortedApplications.map((app) => (
               <div
                 key={app.id}
-                className="bg-white shadow-md rounded-lg p-6 border border-gray-200 hover:shadow-lg transition-shadow duration-200"
+                className="card-hover bg-white rounded-xl p-8 border border-slate-100"
+                style={{ boxShadow: 'var(--shadow-md)' }}
               >
-                {/* Header */}
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex-1">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-1">
+                {/* Enhanced Header */}
+                <div className="flex justify-between items-start mb-6">
+                  <div className="flex-1 pr-4">
+                    <h3 className="text-xl font-bold mb-2" style={{ color: 'var(--color-text-primary)' }}>
                       {app.jobTitle}
                     </h3>
-                    <p className="text-gray-600 font-medium">{app.company}</p>
+                    <p className="text-lg font-semibold mb-1" style={{ color: 'var(--color-primary)' }}>
+                      {app.company}
+                    </p>
                     {app.location && (
-                      <p className="text-gray-500 text-sm">{app.location}</p>
+                      <p className="text-sm flex items-center" style={{ color: 'var(--color-text-tertiary)' }}>
+                        <span className="mr-1">📍</span>
+                        {app.location}
+                      </p>
                     )}
                   </div>
-                  <div className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${getStatusInfo(app.status).color}`}>
-                    {getStatusInfo(app.status).label}
+                  <div className="flex-shrink-0">
+                    <div className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold ${getStatusInfo(app.status).bgColor} ${getStatusInfo(app.status).textColor} status-badge`}>
+                      <div className={`w-2 h-2 rounded-full ${getStatusInfo(app.status).dotColor} mr-2`}></div>
+                      {getStatusInfo(app.status).label}
+                    </div>
                   </div>
                 </div>
 
-                {/* Notes Preview */}
+                {/* Enhanced Notes Preview */}
                 {app.notes && (
-                  <div className="mb-4">
-                    <p className="text-gray-700 text-sm">
+                  <div className="mb-6 p-4 bg-slate-50 rounded-lg border border-slate-100">
+                    <p className="text-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>
+                      Notes:
+                    </p>
+                    <p className="text-sm leading-relaxed" style={{ color: 'var(--color-text-primary)' }}>
                       {truncateText(app.notes)}
                     </p>
                   </div>
                 )}
 
-                {/* Footer */}
-                <div className="flex justify-between items-center pt-4 border-t border-gray-200">
-                  <div className="text-xs text-gray-500">
-                    <div>Added {formatDate(app.createdAt)}</div>
+                {/* Enhanced Footer */}
+                <div className="flex justify-between items-center pt-6 border-t border-slate-100">
+                  <div className="text-xs space-y-1" style={{ color: 'var(--color-text-tertiary)' }}>
+                    <div className="flex items-center">
+                      <span className="mr-1">📅</span>
+                      Added {formatDate(app.createdAt)}
+                    </div>
                     {app.updatedAt && app.updatedAt !== app.createdAt && (
-                      <div>Updated {formatDate(app.updatedAt)}</div>
+                      <div className="flex items-center">
+                        <span className="mr-1">✏️</span>
+                        Updated {formatDate(app.updatedAt)}
+                      </div>
                     )}
                   </div>
                   {app.jobLink && (
@@ -396,7 +451,7 @@ export default function Dashboard() {
                       href={app.jobLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-3 py-1 text-xs bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200"
+                      className="btn-primary px-4 py-2 text-sm font-medium"
                     >
                       View Job
                     </a>
