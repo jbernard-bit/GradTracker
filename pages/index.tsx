@@ -337,13 +337,20 @@ export default function Dashboard() {
       <div className="bg-white border-b border-slate-200" style={{ boxShadow: 'var(--shadow-sm)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-8">
-            <div>
-              <h1 className="text-4xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
-                GradTracker
-              </h1>
-              <p className="text-lg mt-2" style={{ color: 'var(--color-text-secondary)' }}>
-                Track your job applications with ease
-              </p>
+            <div className="flex items-center gap-4">
+              <img 
+                src="/logo.png" 
+                alt="GradTracker Logo" 
+                className="w-16 h-16 object-contain"
+              />
+              <div>
+                <h1 className="text-4xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
+                  GradTracker
+                </h1>
+                <p className="text-lg mt-2" style={{ color: 'var(--color-text-secondary)' }}>
+                  Track your job applications with ease
+                </p>
+              </div>
             </div>
             <ApplicationForm onApplicationAdded={handleApplicationAdded} />
           </div>
