@@ -2,6 +2,8 @@ import { useEffect, useState, useMemo } from "react";
 import { db } from "../lib/firebase";
 import { collection, onSnapshot, query, orderBy, doc, updateDoc, deleteDoc } from "firebase/firestore";
 import ApplicationForm from "../components/ApplicationForm";
+import ResumeUpload from "../components/ResumeUpload";
+import ResumesDisplay from "../components/ResumesDisplay";
 
 // TypeScript interfaces
 interface Application {
@@ -313,6 +315,23 @@ export default function Dashboard() {
               </div>
             );
           })}
+        </div>
+
+        {/* Resume Manager Section */}
+        <div className="bg-white rounded-xl p-8 mb-10 border border-slate-100" style={{ boxShadow: 'var(--shadow-md)' }}>
+          <div className="flex justify-between items-center mb-8">
+            <div>
+              <h2 className="text-2xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
+                Resume Manager
+              </h2>
+              <p className="text-sm mt-1" style={{ color: 'var(--color-text-secondary)' }}>
+                Upload and manage your resume versions
+              </p>
+            </div>
+            <ResumeUpload />
+          </div>
+          
+          <ResumesDisplay />
         </div>
 
         {/* Modern Filter Controls */}
