@@ -339,12 +339,7 @@ export default function Dashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-8">
             <div className="flex items-center gap-4">
-              <img 
-                src="/logo.png?v=2" 
-                alt="GradTracker Logo" 
-                className="w-8 h-8 object-contain"
-              />
-              <div>
+                <div>
                 <h1 className="text-4xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
                   GradTracker
                 </h1>
