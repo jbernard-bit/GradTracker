@@ -5,6 +5,7 @@ import ApplicationForm from "../components/ApplicationForm";
 import ResumeUpload from "../components/ResumeUpload";
 import ResumesDisplay from "../components/ResumesDisplay";
 import ResumeInsights from "../components/ResumeInsights";
+import TabNavigation, { TabContent } from "../components/TabNavigation";
 
 // TypeScript interfaces
 interface Application {
@@ -53,6 +54,7 @@ export default function Dashboard() {
   const [deletingApplication, setDeletingApplication] = useState<Application | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [activeTab, setActiveTab] = useState('applications');
   const [editFormData, setEditFormData] = useState<{
     jobTitle: string;
     company: string;
@@ -332,6 +334,30 @@ export default function Dashboard() {
     setDeletingApplication(null);
   };
 
+  // Define navigation tabs
+  const tabs = [
+    {
+      id: 'applications',
+      label: 'Applications',
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+      ),
+      count: applications.length
+    },
+    {
+      id: 'resumes',
+      label: 'Resumes',
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+      ),
+      count: resumes.length
+    }
+  ];
+
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--color-background)' }}>
       {/* Modern Header */}
@@ -353,9 +379,16 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        
-        {/* MAIN APPLICATIONS SECTION - MOVED TO TOP */}
+      {/* Navigation Tabs */}
+      <TabNavigation 
+        tabs={tabs}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+      />
+
+      {/* Applications Tab */}
+      <TabContent activeTab={activeTab} tabId="applications">
+        {/* MAIN APPLICATIONS SECTION */}
         {/* Results Count - Show only when there are applications and filters */}
         {!loading && !error && applications.length > 0 && (
           <div className="flex justify-between items-center mb-8">
@@ -667,32 +700,36 @@ export default function Dashboard() {
               )}
             </div>
 
-            {/* Resume Manager Section */}
-            <div className="bg-white rounded-xl p-8 mb-10 border border-slate-100" style={{ boxShadow: 'var(--shadow-md)' }}>
-              <div className="flex justify-between items-center mb-8">
-                <div>
-                  <h2 className="text-2xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
-                    Resume Manager
-                  </h2>
-                  <p className="text-sm mt-1" style={{ color: 'var(--color-text-secondary)' }}>
-                    Upload and manage your resume versions
-                  </p>
-                </div>
-                <ResumeUpload />
-              </div>
-              
-              <ResumesDisplay applications={applications} />
-            </div>
-
-            {/* Resume Insights Dashboard */}
-            <div className="mb-10">
-              <ResumeInsights />
-            </div>
-
           </>
         )}
+      </TabContent>
 
-        {/* Edit Application Modal */}
+      {/* Resumes Tab */}
+      <TabContent activeTab={activeTab} tabId="resumes">
+        {/* Resume Manager Section */}
+        <div className="bg-white rounded-xl p-8 mb-10 border border-slate-100" style={{ boxShadow: 'var(--shadow-md)' }}>
+          <div className="flex justify-between items-center mb-8">
+            <div>
+              <h2 className="text-2xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
+                Resume Manager
+              </h2>
+              <p className="text-sm mt-1" style={{ color: 'var(--color-text-secondary)' }}>
+                Upload and manage your resume versions
+              </p>
+            </div>
+            <ResumeUpload />
+          </div>
+          
+          <ResumesDisplay applications={applications} />
+        </div>
+
+        {/* Resume Insights Dashboard */}
+        <div className="mb-10">
+          <ResumeInsights />
+        </div>
+      </TabContent>
+
+      {/* Edit Application Modal */}
         {editingApplication && (
           <div 
             className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 backdrop-blur-sm"
@@ -979,7 +1016,6 @@ export default function Dashboard() {
             </div>
           </div>
         )}
-      </div>
     </div>
   );
 }
