@@ -32,6 +32,8 @@ The application uses a simple document-based structure:
 ## Component Architecture
 - **Multi-View Dashboard**: Implements industry-standard view switching (Board/List/Map/Analytics) with ViewSwitcher component
 - **Kanban Board**: Professional pipeline visualization with KanbanBoard component following Huntr/Teal patterns
+- **Networking System**: Comprehensive contact management with AddHiringManagerForm and HiringManagerCard components
+- **Contact Database**: HiringManager collection with relationship tracking and follow-up scheduling
 - **Modal-based Forms**: ApplicationForm component implements overlay modal pattern for data entry
 - **Real-time Dashboard**: Main dashboard uses Firebase listeners for live data updates
 - **Filtering System**: Client-side filtering and sorting with search, status, and date-based filters

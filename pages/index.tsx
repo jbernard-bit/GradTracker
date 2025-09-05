@@ -8,6 +8,8 @@ import ResumeInsights from "../components/ResumeInsights";
 import TabNavigation, { TabContent } from "../components/TabNavigation";
 import ViewSwitcher from "../components/ViewSwitcher";
 import KanbanBoard from "../components/KanbanBoard";
+import AddHiringManagerForm from "../components/AddHiringManagerForm";
+import HiringManagerCard from "../components/HiringManagerCard";
 
 // TypeScript interfaces
 interface Application {
@@ -19,8 +21,33 @@ interface Application {
   status: 'saved' | 'applied' | 'phone-screen' | 'interview' | 'offer' | 'rejected';
   notes?: string;
   resumeId?: string; // Optional reference to resume
+  hiringManagerId?: string; // Optional reference to hiring manager
   createdAt: any; // Firebase Timestamp
   updatedAt: any; // Firebase Timestamp
+}
+
+interface HiringManager {
+  id: string;
+  name: string;
+  role: string;
+  email?: string;
+  linkedinProfile?: string;
+  company: string;
+  notes?: string;
+  lastContactDate?: any; // Firebase Timestamp
+  nextFollowUpDate?: any; // Firebase Timestamp
+  createdAt: any; // Firebase Timestamp
+  updatedAt: any; // Firebase Timestamp
+}
+
+interface FollowUpReminder {
+  id: string;
+  hiringManagerId: string;
+  applicationId?: string;
+  reminderDate: any; // Firebase Timestamp
+  message: string;
+  completed: boolean;
+  createdAt: any; // Firebase Timestamp
 }
 
 interface FilterState {
@@ -45,6 +72,8 @@ interface Resume {
 export default function Dashboard() {
   const [applications, setApplications] = useState<Application[]>([]);
   const [resumes, setResumes] = useState<Resume[]>([]);
+  const [hiringManagers, setHiringManagers] = useState<HiringManager[]>([]);
+  const [followUpReminders, setFollowUpReminders] = useState<FollowUpReminder[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<FilterState>({
@@ -68,6 +97,7 @@ export default function Dashboard() {
     status: 'saved' | 'applied' | 'phone-screen' | 'interview' | 'offer' | 'rejected';
     notes: string;
     resumeId: string;
+    hiringManagerId: string;
   }>({
     jobTitle: '',
     company: '',
@@ -75,7 +105,8 @@ export default function Dashboard() {
     jobLink: '',
     status: 'saved',
     notes: '',
-    resumeId: ''
+    resumeId: '',
+    hiringManagerId: ''
   });
 
   // Industry-standard status pipeline following Huntr/Teal patterns
@@ -162,10 +193,61 @@ export default function Dashboard() {
     return () => unsubscribe();
   }, []);
 
+  // Fetch hiring managers from Firebase
+  useEffect(() => {
+    const q = query(collection(db, 'hiringManagers'), orderBy('createdAt', 'desc'));
+    
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const managersData: HiringManager[] = [];
+      snapshot.forEach((doc) => {
+        managersData.push({
+          id: doc.id,
+          ...doc.data()
+        } as HiringManager);
+      });
+      setHiringManagers(managersData);
+    }, (error) => {
+      console.error('Error fetching hiring managers:', error);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // Fetch follow-up reminders from Firebase
+  useEffect(() => {
+    const q = query(collection(db, 'followUpReminders'), orderBy('reminderDate', 'asc'));
+    
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const remindersData: FollowUpReminder[] = [];
+      snapshot.forEach((doc) => {
+        remindersData.push({
+          id: doc.id,
+          ...doc.data()
+        } as FollowUpReminder);
+      });
+      setFollowUpReminders(remindersData);
+    }, (error) => {
+      console.error('Error fetching follow-up reminders:', error);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   // Helper function to get resume name by ID
   const getResumeName = (resumeId: string): string | null => {
     const resume = resumes.find(r => r.id === resumeId);
     return resume ? resume.name : null;
+  };
+
+  // Helper function to get hiring manager name by ID
+  const getHiringManagerName = (managerId: string): string | null => {
+    const manager = hiringManagers.find(m => m.id === managerId);
+    return manager ? manager.name : null;
+  };
+
+  // Helper function to get hiring manager by ID
+  const getHiringManager = (managerId: string): HiringManager | null => {
+    return hiringManagers.find(m => m.id === managerId) || null;
   };
 
   // Filtered and sorted applications
@@ -256,7 +338,8 @@ export default function Dashboard() {
       jobLink: application.jobLink || '',
       status: application.status,
       notes: application.notes || '',
-      resumeId: application.resumeId || ''
+      resumeId: application.resumeId || '',
+      hiringManagerId: application.hiringManagerId || ''
     });
   };
 
@@ -362,6 +445,16 @@ export default function Dashboard() {
         </svg>
       ),
       count: resumes.length
+    },
+    {
+      id: 'networking',
+      label: 'Networking',
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+        </svg>
+      ),
+      count: hiringManagers.length
     },
     {
       id: 'analytics',
@@ -690,6 +783,146 @@ export default function Dashboard() {
           <ResumesDisplay applications={applications} />
         </div>
 
+      </TabContent>
+
+      {/* Networking Tab */}
+      <TabContent activeTab={activeTab} tabId="networking">
+        {/* Networking Header */}
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h2 className="text-2xl font-bold text-slate-900">
+              Professional Network
+            </h2>
+            <p className="text-slate-600 mt-1">
+              Build and manage your professional relationships
+            </p>
+          </div>
+          <AddHiringManagerForm onManagerAdded={() => {
+            console.log('Hiring manager added - list will update automatically');
+          }} />
+        </div>
+
+        {/* Network Statistics */}
+        {hiringManagers.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
+              <div className="flex items-center">
+                <div className="p-2 bg-blue-100 rounded-lg mr-3">
+                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-slate-900">{hiringManagers.length}</p>
+                  <p className="text-sm text-slate-600">Total Contacts</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
+              <div className="flex items-center">
+                <div className="p-2 bg-green-100 rounded-lg mr-3">
+                  <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-slate-900">
+                    {hiringManagers.filter(m => m.email).length}
+                  </p>
+                  <p className="text-sm text-slate-600">With Email</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
+              <div className="flex items-center">
+                <div className="p-2 bg-purple-100 rounded-lg mr-3">
+                  <svg className="w-5 h-5 text-purple-600" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-slate-900">
+                    {hiringManagers.filter(m => m.linkedinProfile).length}
+                  </p>
+                  <p className="text-sm text-slate-600">LinkedIn Profiles</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
+              <div className="flex items-center">
+                <div className="p-2 bg-amber-100 rounded-lg mr-3">
+                  <svg className="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-slate-900">
+                    {hiringManagers.filter(m => {
+                      if (!m.nextFollowUpDate) return false;
+                      const today = new Date();
+                      const followUpDate = m.nextFollowUpDate.toDate ? 
+                        m.nextFollowUpDate.toDate() : 
+                        new Date(m.nextFollowUpDate);
+                      return followUpDate <= today;
+                    }).length}
+                  </p>
+                  <p className="text-sm text-slate-600">Follow-ups Due</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Contacts Grid */}
+        {loading && (
+          <div className="flex justify-center items-center py-20">
+            <div className="flex items-center space-x-4">
+              <div className="w-6 h-6 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+              <span className="text-lg font-medium text-slate-600">
+                Loading contacts...
+              </span>
+            </div>
+          </div>
+        )}
+
+        {!loading && hiringManagers.length === 0 && (
+          <div className="flex items-center justify-center min-h-[calc(100vh-400px)]">
+            <div className="text-center max-w-lg">
+              <div className="text-8xl mb-8">🤝</div>
+              <h2 className="text-4xl font-bold mb-6 text-slate-900">
+                Start Building Your Network
+              </h2>
+              <p className="text-xl mb-10 text-slate-600 leading-relaxed">
+                Add hiring managers and recruiters to build professional relationships that will advance your career.
+              </p>
+              <AddHiringManagerForm onManagerAdded={() => {
+                console.log('Hiring manager added - list will update automatically');
+              }} />
+            </div>
+          </div>
+        )}
+
+        {!loading && hiringManagers.length > 0 && (
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+            {hiringManagers.map((manager) => (
+              <HiringManagerCard
+                key={manager.id}
+                manager={manager}
+                onEdit={(manager) => {
+                  // TODO: Implement edit functionality
+                  console.log('Edit manager:', manager);
+                }}
+                onDelete={(manager) => {
+                  // TODO: Implement delete functionality
+                  console.log('Delete manager:', manager);
+                }}
+              />
+            ))}
+          </div>
+        )}
       </TabContent>
 
       {/* Analytics Tab */}
