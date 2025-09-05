@@ -378,7 +378,7 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="flex h-screen" style={{ backgroundColor: 'var(--color-background)' }}>
+    <div className="flex h-screen bg-slate-50">
       {/* Sidebar Navigation */}
       <TabNavigation 
         tabs={tabs}
@@ -409,7 +409,7 @@ export default function Dashboard() {
         {/* Results Count - Show only when there are applications and filters */}
         {!loading && !error && applications.length > 0 && (
           <div className="flex justify-between items-center mb-8">
-            <p className="text-lg font-medium" style={{ color: 'var(--color-text-secondary)' }}>
+            <p className="text-lg font-medium text-slate-600">
               {filteredAndSortedApplications.length} of {applications.length} applications
             </p>
           </div>
@@ -420,7 +420,7 @@ export default function Dashboard() {
           <div className="flex justify-center items-center py-20">
             <div className="flex items-center space-x-4">
               <div className="w-6 h-6 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
-              <span className="text-lg font-medium" style={{ color: 'var(--color-text-secondary)' }}>
+              <span className="text-lg font-medium text-slate-600">
                 Loading applications...
               </span>
             </div>
@@ -488,20 +488,19 @@ export default function Dashboard() {
             {filteredAndSortedApplications.map((app) => (
               <div
                 key={app.id}
-                className="card-hover bg-white rounded-xl p-8 border border-slate-100"
-                style={{ boxShadow: 'var(--shadow-md)' }}
+                className="card-hover bg-white rounded-xl p-8 border border-slate-100 shadow-md"
               >
                 {/* Enhanced Header */}
                 <div className="flex justify-between items-start mb-6">
                   <div className="flex-1 pr-4">
-                    <h3 className="text-xl font-bold mb-2" style={{ color: 'var(--color-text-primary)' }}>
+                    <h3 className="text-xl font-bold mb-2 text-slate-900">
                       {app.jobTitle}
                     </h3>
-                    <p className="text-lg font-semibold mb-1" style={{ color: 'var(--color-primary)' }}>
+                    <p className="text-lg font-semibold mb-1 text-blue-600">
                       {app.company}
                     </p>
                     {app.location && (
-                      <p className="text-sm flex items-center" style={{ color: 'var(--color-text-tertiary)' }}>
+                      <p className="text-sm flex items-center text-slate-500">
                         <span className="mr-1">📍</span>
                         {app.location}
                       </p>
@@ -530,10 +529,10 @@ export default function Dashboard() {
                 {/* Enhanced Notes Preview */}
                 {app.notes && (
                   <div className="mb-6 p-4 bg-slate-50 rounded-lg border border-slate-100">
-                    <p className="text-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>
+                    <p className="text-sm font-medium mb-2 text-slate-600">
                       Notes:
                     </p>
-                    <p className="text-sm leading-relaxed" style={{ color: 'var(--color-text-primary)' }}>
+                    <p className="text-sm leading-relaxed text-slate-900">
                       {truncateText(app.notes)}
                     </p>
                   </div>
@@ -542,7 +541,7 @@ export default function Dashboard() {
                 {/* Enhanced Footer with Actions */}
                 <div className="pt-6 border-t border-slate-100 space-y-4">
                   {/* Date Information */}
-                  <div className="text-xs space-y-1" style={{ color: 'var(--color-text-tertiary)' }}>
+                  <div className="text-xs space-y-1 text-slate-500">
                     <div className="flex items-center">
                       <span className="mr-1">📅</span>
                       Added {formatDate(app.createdAt)}
@@ -598,8 +597,7 @@ export default function Dashboard() {
               return (
                 <div
                   key={status.value}
-                  className={`card-hover bg-white rounded-xl p-6 text-center border border-slate-100`}
-                  style={{ boxShadow: 'var(--shadow-md)' }}
+                  className={`card-hover bg-white rounded-xl p-6 text-center border border-slate-100 shadow-md`}
                 >
                   <div className="flex items-center justify-center mb-4">
                     <div className={`w-4 h-4 rounded-full ${status.dotColor} mr-3`}></div>
@@ -607,10 +605,10 @@ export default function Dashboard() {
                       {status.label}
                     </span>
                   </div>
-                  <div className="text-3xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
+                  <div className="text-3xl font-bold text-slate-900">
                     {count}
                   </div>
-                  <div className="text-sm mt-1" style={{ color: 'var(--color-text-tertiary)' }}>
+                  <div className="text-sm mt-1 text-slate-500">
                     applications
                   </div>
                 </div>
@@ -623,12 +621,12 @@ export default function Dashboard() {
         {!loading && !error && (
           <>
             {/* Modern Filter Controls */}
-            <div className="bg-white rounded-xl p-8 mb-10 border border-slate-100" style={{ boxShadow: 'var(--shadow-md)' }}>
+            <div className="bg-white rounded-xl p-8 mb-10 border border-slate-100 shadow-md">
               <div className="flex flex-col xl:flex-row gap-6 items-start xl:items-end">
                 <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-6">
                   {/* Company Filter */}
                   <div>
-                    <label htmlFor="company-filter" className="block text-sm font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>
+                    <label htmlFor="company-filter" className="block text-sm font-semibold mb-3 text-slate-900">
                       Search Company
                     </label>
                     <input
@@ -643,7 +641,7 @@ export default function Dashboard() {
 
                   {/* Status Filter */}
                   <div>
-                    <label htmlFor="status-filter" className="block text-sm font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>
+                    <label htmlFor="status-filter" className="block text-sm font-semibold mb-3 text-slate-900">
                       Filter by Status
                     </label>
                     <select
@@ -662,7 +660,7 @@ export default function Dashboard() {
 
                   {/* Sort */}
                   <div>
-                    <label htmlFor="sort-filter" className="block text-sm font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>
+                    <label htmlFor="sort-filter" className="block text-sm font-semibold mb-3 text-slate-900">
                       Sort by
                     </label>
                     <select
@@ -692,7 +690,7 @@ export default function Dashboard() {
               {/* Active Filters Display */}
               {(filters.company || filters.status) && (
                 <div className="mt-6 flex flex-wrap gap-3">
-                  <span className="text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>
+                  <span className="text-sm font-medium text-slate-600">
                     Active filters:
                   </span>
                   {filters.company && (
@@ -728,13 +726,13 @@ export default function Dashboard() {
       {/* Resumes Tab */}
       <TabContent activeTab={activeTab} tabId="resumes">
         {/* Resume Manager Section */}
-        <div className="bg-white rounded-xl p-8 mb-10 border border-slate-100" style={{ boxShadow: 'var(--shadow-md)' }}>
+        <div className="bg-white rounded-xl p-8 mb-10 border border-slate-100 shadow-md">
           <div className="flex justify-between items-center mb-8">
             <div>
-              <h2 className="text-2xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
+              <h2 className="text-2xl font-bold text-slate-900">
                 Resume Manager
               </h2>
-              <p className="text-sm mt-1" style={{ color: 'var(--color-text-secondary)' }}>
+              <p className="text-sm mt-1 text-slate-600">
                 Upload and manage your resume versions
               </p>
             </div>
@@ -756,7 +754,7 @@ export default function Dashboard() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
             </div>
-            <h2 className="text-2xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
+            <h2 className="text-2xl font-bold text-slate-900">
               Advanced Analytics
             </h2>
           </div>
@@ -766,14 +764,14 @@ export default function Dashboard() {
         {/* Future Analytics Sections */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
           {/* Application Trends */}
-          <div className="bg-white p-6 rounded-xl border border-slate-100" style={{ boxShadow: 'var(--shadow-sm)' }}>
+          <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 bg-green-100 rounded-lg">
                 <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+              <h3 className="text-lg font-semibold text-slate-900">
                 Application Trends
               </h3>
             </div>
@@ -789,14 +787,14 @@ export default function Dashboard() {
           </div>
 
           {/* Company Insights */}
-          <div className="bg-white p-6 rounded-xl border border-slate-100" style={{ boxShadow: 'var(--shadow-sm)' }}>
+          <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 bg-purple-100 rounded-lg">
                 <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+              <h3 className="text-lg font-semibold text-slate-900">
                 Company Insights
               </h3>
             </div>
@@ -812,14 +810,14 @@ export default function Dashboard() {
           </div>
 
           {/* Time Analysis */}
-          <div className="bg-white p-6 rounded-xl border border-slate-100" style={{ boxShadow: 'var(--shadow-sm)' }}>
+          <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 bg-orange-100 rounded-lg">
                 <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+              <h3 className="text-lg font-semibold text-slate-900">
                 Response Time Analysis
               </h3>
             </div>
@@ -835,14 +833,14 @@ export default function Dashboard() {
           </div>
 
           {/* Goal Tracking */}
-          <div className="bg-white p-6 rounded-xl border border-slate-100" style={{ boxShadow: 'var(--shadow-sm)' }}>
+          <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 bg-emerald-100 rounded-lg">
                 <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+              <h3 className="text-lg font-semibold text-slate-900">
                 Goal Progress
               </h3>
             </div>
@@ -869,7 +867,7 @@ export default function Dashboard() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
             </div>
-            <h2 className="text-2xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
+            <h2 className="text-2xl font-bold text-slate-900">
               Settings
             </h2>
           </div>
@@ -877,14 +875,14 @@ export default function Dashboard() {
           {/* Settings Sections */}
           <div className="space-y-6">
             {/* Profile Settings */}
-            <div className="bg-white p-6 rounded-xl border border-slate-100" style={{ boxShadow: 'var(--shadow-sm)' }}>
+            <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
               <div className="flex items-center gap-3 mb-4">
                 <div className="p-2 bg-blue-100 rounded-lg">
                   <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                <h3 className="text-lg font-semibold text-slate-900">
                   Profile Settings
                 </h3>
               </div>
@@ -900,14 +898,14 @@ export default function Dashboard() {
             </div>
 
             {/* Notification Settings */}
-            <div className="bg-white p-6 rounded-xl border border-slate-100" style={{ boxShadow: 'var(--shadow-sm)' }}>
+            <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
               <div className="flex items-center gap-3 mb-4">
                 <div className="p-2 bg-yellow-100 rounded-lg">
                   <svg className="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5 5v-5zM9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                <h3 className="text-lg font-semibold text-slate-900">
                   Notifications
                 </h3>
               </div>
@@ -923,14 +921,14 @@ export default function Dashboard() {
             </div>
 
             {/* Data Management */}
-            <div className="bg-white p-6 rounded-xl border border-slate-100" style={{ boxShadow: 'var(--shadow-sm)' }}>
+            <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
               <div className="flex items-center gap-3 mb-4">
                 <div className="p-2 bg-red-100 rounded-lg">
                   <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                <h3 className="text-lg font-semibold text-slate-900">
                   Data Management
                 </h3>
               </div>
@@ -955,14 +953,13 @@ export default function Dashboard() {
             style={{ backdropFilter: 'blur(8px)' }}
           >
             <div 
-              className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-slate-200"
-              style={{ boxShadow: 'var(--shadow-xl)' }}
+              className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-slate-200 shadow-xl"
             >
               <div className="px-8 py-6 border-b border-slate-200 bg-gradient-to-r from-blue-50 to-slate-50">
-                <h2 className="text-3xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
+                <h2 className="text-3xl font-bold text-slate-900">
                   Edit Application
                 </h2>
-                <p className="text-lg mt-2" style={{ color: 'var(--color-text-secondary)' }}>
+                <p className="text-lg mt-2 text-slate-600">
                   Update your job application details
                 </p>
               </div>
@@ -971,7 +968,7 @@ export default function Dashboard() {
               <form onSubmit={handleEditFormSubmit} className="px-8 py-8 space-y-8">
                 {/* Job Title */}
                 <div>
-                  <label htmlFor="edit-jobTitle" className="block text-sm font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>
+                  <label htmlFor="edit-jobTitle" className="block text-sm font-semibold mb-3 text-slate-900">
                     Job Title *
                   </label>
                   <input
@@ -988,7 +985,7 @@ export default function Dashboard() {
 
                 {/* Company */}
                 <div>
-                  <label htmlFor="edit-company" className="block text-sm font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>
+                  <label htmlFor="edit-company" className="block text-sm font-semibold mb-3 text-slate-900">
                     Company *
                   </label>
                   <input
@@ -1007,7 +1004,7 @@ export default function Dashboard() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Location */}
                   <div>
-                    <label htmlFor="edit-location" className="block text-sm font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>
+                    <label htmlFor="edit-location" className="block text-sm font-semibold mb-3 text-slate-900">
                       Location
                     </label>
                     <input
@@ -1023,7 +1020,7 @@ export default function Dashboard() {
 
                   {/* Job Link */}
                   <div>
-                    <label htmlFor="edit-jobLink" className="block text-sm font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>
+                    <label htmlFor="edit-jobLink" className="block text-sm font-semibold mb-3 text-slate-900">
                       Job Link
                     </label>
                     <input
@@ -1040,7 +1037,7 @@ export default function Dashboard() {
 
                 {/* Enhanced Status */}
                 <div>
-                  <label htmlFor="edit-status" className="block text-sm font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>
+                  <label htmlFor="edit-status" className="block text-sm font-semibold mb-3 text-slate-900">
                     Status
                   </label>
                   <select
@@ -1059,7 +1056,7 @@ export default function Dashboard() {
                   
                   {/* Status Preview */}
                   <div className="mt-3">
-                    <span className="text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>
+                    <span className="text-sm font-medium text-slate-600">
                       Preview:
                     </span>
                     <div className="mt-2">
@@ -1078,8 +1075,8 @@ export default function Dashboard() {
 
                 {/* Resume Selection */}
                 <div>
-                  <label htmlFor="edit-resumeId" className="block text-sm font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>
-                    Resume Used <span className="text-sm font-normal" style={{ color: 'var(--color-text-secondary)' }}>(Optional)</span>
+                  <label htmlFor="edit-resumeId" className="block text-sm font-semibold mb-3 text-slate-900">
+                    Resume Used <span className="text-sm font-normal text-slate-600">(Optional)</span>
                   </label>
                   <select
                     id="edit-resumeId"
@@ -1099,7 +1096,7 @@ export default function Dashboard() {
                   {/* Resume Preview */}
                   {editFormData.resumeId && (
                     <div className="mt-3">
-                      <span className="text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>
+                      <span className="text-sm font-medium text-slate-600">
                         Selected:
                       </span>
                       <div className="mt-2">
@@ -1121,7 +1118,7 @@ export default function Dashboard() {
 
                 {/* Enhanced Notes */}
                 <div>
-                  <label htmlFor="edit-notes" className="block text-sm font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>
+                  <label htmlFor="edit-notes" className="block text-sm font-semibold mb-3 text-slate-900">
                     Notes
                   </label>
                   <textarea
@@ -1133,7 +1130,7 @@ export default function Dashboard() {
                     className="input-modern w-full px-4 py-3 text-lg focus-ring resize-none"
                     placeholder="Add any additional notes, requirements, or thoughts about this position..."
                   />
-                  <div className="mt-2 text-xs" style={{ color: 'var(--color-text-tertiary)' }}>
+                  <div className="mt-2 text-xs text-slate-500">
                     {editFormData.notes.length}/500 characters
                   </div>
                 </div>
@@ -1175,28 +1172,27 @@ export default function Dashboard() {
             style={{ backdropFilter: 'blur(8px)' }}
           >
             <div 
-              className="bg-white rounded-2xl w-full max-w-md border border-slate-200"
-              style={{ boxShadow: 'var(--shadow-xl)' }}
+              className="bg-white rounded-2xl w-full max-w-md border border-slate-200 shadow-xl"
             >
               <div className="px-8 py-6 border-b border-slate-200 bg-gradient-to-r from-red-50 to-slate-50">
                 <h2 className="text-2xl font-bold text-red-700">
                   Delete Application
                 </h2>
-                <p className="text-lg mt-2" style={{ color: 'var(--color-text-secondary)' }}>
+                <p className="text-lg mt-2 text-slate-600">
                   Are you sure you want to delete this application?
                 </p>
               </div>
 
               <div className="px-8 py-6">
                 <div className="mb-6">
-                  <h3 className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                  <h3 className="text-lg font-semibold text-slate-900">
                     {deletingApplication.jobTitle}
                   </h3>
-                  <p className="text-md" style={{ color: 'var(--color-primary)' }}>
+                  <p className="text-md text-blue-600">
                     {deletingApplication.company}
                   </p>
                   {deletingApplication.location && (
-                    <p className="text-sm" style={{ color: 'var(--color-text-tertiary)' }}>
+                    <p className="text-sm text-slate-500">
                       📍 {deletingApplication.location}
                     </p>
                   )}
