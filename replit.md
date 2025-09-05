@@ -2,7 +2,7 @@
 
 GradTrack is a comprehensive job application tracking system designed for recent graduates to organize their job search process. The application provides a focused solution for managing job applications, resume versions, and networking contacts, competing with existing tools like Teal and Trac through simplicity and focused functionality.
 
-The system is currently in development with a working application form component and Firebase backend integration. The main dashboard implementation is in progress, requiring completion of the application listing, filtering, and sorting features.
+The system now features a comprehensive multi-view dashboard with Kanban board functionality, following industry standards from platforms like Huntr and Teal. The main dashboard includes view switching between Board, List, Map, and Analytics views, with the Kanban board implementing a professional status pipeline.
 
 # User Preferences
 
@@ -30,10 +30,12 @@ The application uses a simple document-based structure:
 - **Resumes Collection**: Planned for multiple resume version management
 
 ## Component Architecture
+- **Multi-View Dashboard**: Implements industry-standard view switching (Board/List/Map/Analytics) with ViewSwitcher component
+- **Kanban Board**: Professional pipeline visualization with KanbanBoard component following Huntr/Teal patterns
 - **Modal-based Forms**: ApplicationForm component implements overlay modal pattern for data entry
 - **Real-time Dashboard**: Main dashboard uses Firebase listeners for live data updates
 - **Filtering System**: Client-side filtering and sorting with search, status, and date-based filters
-- **Status Management**: Color-coded status system with predefined categories (To Apply, Applied, Interviewing, Offer, Rejected)
+- **Status Management**: Industry-standard 6-stage pipeline (Saved → Applied → Phone Screen → Interview → Offer → Rejected) with color-coded columns
 
 # External Dependencies
 

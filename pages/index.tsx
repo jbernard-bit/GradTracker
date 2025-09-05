@@ -6,6 +6,8 @@ import ResumeUpload from "../components/ResumeUpload";
 import ResumesDisplay from "../components/ResumesDisplay";
 import ResumeInsights from "../components/ResumeInsights";
 import TabNavigation, { TabContent } from "../components/TabNavigation";
+import ViewSwitcher from "../components/ViewSwitcher";
+import KanbanBoard from "../components/KanbanBoard";
 
 // TypeScript interfaces
 interface Application {
@@ -14,7 +16,7 @@ interface Application {
   company: string;
   location?: string;
   jobLink?: string;
-  status: 'to-apply' | 'applied' | 'interviewing' | 'offer' | 'rejected';
+  status: 'saved' | 'applied' | 'phone-screen' | 'interview' | 'offer' | 'rejected';
   notes?: string;
   resumeId?: string; // Optional reference to resume
   createdAt: any; // Firebase Timestamp
@@ -55,12 +57,15 @@ export default function Dashboard() {
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [activeTab, setActiveTab] = useState('applications');
+  
+  // View management for Applications section
+  const [currentView, setCurrentView] = useState<'board' | 'list' | 'map' | 'analytics'>('board');
   const [editFormData, setEditFormData] = useState<{
     jobTitle: string;
     company: string;
     location: string;
     jobLink: string;
-    status: 'to-apply' | 'applied' | 'interviewing' | 'offer' | 'rejected';
+    status: 'saved' | 'applied' | 'phone-screen' | 'interview' | 'offer' | 'rejected';
     notes: string;
     resumeId: string;
   }>({
@@ -68,16 +73,18 @@ export default function Dashboard() {
     company: '',
     location: '',
     jobLink: '',
-    status: 'to-apply',
+    status: 'saved',
     notes: '',
     resumeId: ''
   });
 
+  // Industry-standard status pipeline following Huntr/Teal patterns
   const statusOptions: StatusOption[] = [
     { value: '', label: 'All Status', bgColor: '', textColor: '', dotColor: '' },
-    { value: 'to-apply', label: 'To Apply', bgColor: 'bg-slate-50', textColor: 'text-slate-700', dotColor: 'bg-slate-400' },
+    { value: 'saved', label: 'Saved', bgColor: 'bg-slate-50', textColor: 'text-slate-700', dotColor: 'bg-slate-400' },
     { value: 'applied', label: 'Applied', bgColor: 'bg-blue-50', textColor: 'text-blue-700', dotColor: 'bg-blue-500' },
-    { value: 'interviewing', label: 'Interviewing', bgColor: 'bg-amber-50', textColor: 'text-amber-700', dotColor: 'bg-amber-500' },
+    { value: 'phone-screen', label: 'Phone Screen', bgColor: 'bg-purple-50', textColor: 'text-purple-700', dotColor: 'bg-purple-500' },
+    { value: 'interview', label: 'Interview', bgColor: 'bg-amber-50', textColor: 'text-amber-700', dotColor: 'bg-amber-500' },
     { value: 'offer', label: 'Offer', bgColor: 'bg-emerald-50', textColor: 'text-emerald-700', dotColor: 'bg-emerald-500' },
     { value: 'rejected', label: 'Rejected', bgColor: 'bg-red-50', textColor: 'text-red-700', dotColor: 'bg-red-500' }
   ];
@@ -405,14 +412,13 @@ export default function Dashboard() {
 
       {/* Applications Tab */}
       <TabContent activeTab={activeTab} tabId="applications">
-        {/* MAIN APPLICATIONS SECTION */}
-        {/* Results Count - Show only when there are applications and filters */}
-        {!loading && !error && applications.length > 0 && (
-          <div className="flex justify-between items-center mb-8">
-            <p className="text-lg font-medium text-slate-600">
-              {filteredAndSortedApplications.length} of {applications.length} applications
-            </p>
-          </div>
+        {/* View Switcher */}
+        {!loading && !error && (
+          <ViewSwitcher
+            currentView={currentView}
+            onViewChange={setCurrentView}
+            applicationCount={applications.length}
+          />
         )}
 
         {/* Modern Loading State */}
@@ -462,7 +468,7 @@ export default function Dashboard() {
         )}
 
         {/* Enhanced No Results State */}
-        {!loading && !error && filteredAndSortedApplications.length === 0 && applications.length > 0 && (
+        {!loading && !error && currentView !== 'board' && filteredAndSortedApplications.length === 0 && applications.length > 0 && (
           <div className="flex items-center justify-center min-h-[calc(100vh-300px)]">
             <div className="text-center max-w-lg">
               <div className="text-8xl mb-8">🔍</div>
@@ -482,112 +488,54 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Enhanced Applications Grid */}
-        {!loading && !error && filteredAndSortedApplications.length > 0 && (
-          <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
-            {filteredAndSortedApplications.map((app) => (
-              <div
-                key={app.id}
-                className="card-hover bg-white rounded-xl p-8 border border-slate-100 shadow-md"
-              >
-                {/* Enhanced Header */}
-                <div className="flex justify-between items-start mb-6">
-                  <div className="flex-1 pr-4">
-                    <h3 className="text-xl font-bold mb-2 text-slate-900">
-                      {app.jobTitle}
-                    </h3>
-                    <p className="text-lg font-semibold mb-1 text-blue-600">
-                      {app.company}
-                    </p>
-                    {app.location && (
-                      <p className="text-sm flex items-center text-slate-500">
-                        <span className="mr-1">📍</span>
-                        {app.location}
-                      </p>
-                    )}
-                    
-                    {/* Resume Badge */}
-                    {app.resumeId && getResumeName(app.resumeId) && (
-                      <div className="mt-2">
-                        <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
-                          <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
-                          </svg>
-                          {getResumeName(app.resumeId)}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex-shrink-0">
-                    <div className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold ${getStatusInfo(app.status).bgColor} ${getStatusInfo(app.status).textColor} status-badge`}>
-                      <div className={`w-2 h-2 rounded-full ${getStatusInfo(app.status).dotColor} mr-2`}></div>
-                      {getStatusInfo(app.status).label}
-                    </div>
-                  </div>
-                </div>
+        {/* View Content */}
+        {!loading && !error && applications.length > 0 && (
+          <>
+            {/* Kanban Board View */}
+            {currentView === 'board' && (
+              <KanbanBoard
+                applications={applications}
+                onApplicationEdit={handleEditApplication}
+                onApplicationDelete={handleDeleteApplication}
+                getResumeName={getResumeName}
+              />
+            )}
 
-                {/* Enhanced Notes Preview */}
-                {app.notes && (
-                  <div className="mb-6 p-4 bg-slate-50 rounded-lg border border-slate-100">
-                    <p className="text-sm font-medium mb-2 text-slate-600">
-                      Notes:
-                    </p>
-                    <p className="text-sm leading-relaxed text-slate-900">
-                      {truncateText(app.notes)}
-                    </p>
-                  </div>
-                )}
-
-                {/* Enhanced Footer with Actions */}
-                <div className="pt-6 border-t border-slate-100 space-y-4">
-                  {/* Date Information */}
-                  <div className="text-xs space-y-1 text-slate-500">
-                    <div className="flex items-center">
-                      <span className="mr-1">📅</span>
-                      Added {formatDate(app.createdAt)}
-                    </div>
-                    {app.updatedAt && app.updatedAt !== app.createdAt && (
-                      <div className="flex items-center">
-                        <span className="mr-1">✏️</span>
-                        Updated {formatDate(app.updatedAt)}
-                      </div>
-                    )}
-                  </div>
-                  
-                  {/* Action Buttons */}
-                  <div className="flex justify-between items-center">
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => handleEditApplication(app)}
-                        className="btn-secondary px-3 py-2 text-sm font-medium flex items-center gap-2 hover:bg-blue-50"
-                      >
-                        <span className="text-blue-600">✏️</span>
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDeleteApplication(app)}
-                        className="btn-secondary px-3 py-2 text-sm font-medium flex items-center gap-2 hover:bg-red-50 text-red-600 border-red-200"
-                      >
-                        <span>🗑️</span>
-                        Delete
-                      </button>
-                    </div>
-                    {app.jobLink && (
-                      <a
-                        href={app.jobLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn-primary px-4 py-2 text-sm font-medium"
-                      >
-                        View Job
-                      </a>
-                    )}
-                  </div>
+            {/* List View */}
+            {currentView === 'list' && (
+              <div className="bg-white rounded-xl p-8 border border-slate-200 shadow-sm">
+                <div className="text-center py-20">
+                  <div className="text-6xl mb-4">📋</div>
+                  <h3 className="text-xl font-semibold text-slate-900 mb-2">List View</h3>
+                  <p className="text-slate-600">Detailed table view coming soon</p>
                 </div>
               </div>
-            ))}
-          </div>
+            )}
+
+            {/* Map View */}
+            {currentView === 'map' && (
+              <div className="bg-white rounded-xl p-8 border border-slate-200 shadow-sm">
+                <div className="text-center py-20">
+                  <div className="text-6xl mb-4">🗺️</div>
+                  <h3 className="text-xl font-semibold text-slate-900 mb-2">Map View</h3>
+                  <p className="text-slate-600">Geographic visualization coming soon</p>
+                </div>
+              </div>
+            )}
+
+            {/* Analytics View */}
+            {currentView === 'analytics' && (
+              <div className="bg-white rounded-xl p-8 border border-slate-200 shadow-sm">
+                <div className="text-center py-20">
+                  <div className="text-6xl mb-4">📊</div>
+                  <h3 className="text-xl font-semibold text-slate-900 mb-2">Analytics View</h3>
+                  <p className="text-slate-600">Success metrics and insights coming soon</p>
+                </div>
+              </div>
+            )}
+          </>
         )}
+
 
         {/* Enhanced Stats Summary - Moved up for better visibility */}
         {!loading && !error && applications.length > 0 && (

@@ -20,15 +20,17 @@ export default function ApplicationForm({ onApplicationAdded }: ApplicationFormP
     company: '',
     location: '',
     jobLink: '',
-    status: 'to-apply',
+    status: 'saved',
     notes: '',
     resumeId: ''
   });
 
+  // Industry-standard status pipeline following Huntr/Teal patterns  
   const statusOptions = [
-    { value: 'to-apply', label: 'To Apply', bgColor: 'bg-slate-50', textColor: 'text-slate-700', dotColor: 'bg-slate-400' },
+    { value: 'saved', label: 'Saved', bgColor: 'bg-slate-50', textColor: 'text-slate-700', dotColor: 'bg-slate-400' },
     { value: 'applied', label: 'Applied', bgColor: 'bg-blue-50', textColor: 'text-blue-700', dotColor: 'bg-blue-500' },
-    { value: 'interviewing', label: 'Interviewing', bgColor: 'bg-amber-50', textColor: 'text-amber-700', dotColor: 'bg-amber-500' },
+    { value: 'phone-screen', label: 'Phone Screen', bgColor: 'bg-purple-50', textColor: 'text-purple-700', dotColor: 'bg-purple-500' },
+    { value: 'interview', label: 'Interview', bgColor: 'bg-amber-50', textColor: 'text-amber-700', dotColor: 'bg-amber-500' },
     { value: 'offer', label: 'Offer', bgColor: 'bg-emerald-50', textColor: 'text-emerald-700', dotColor: 'bg-emerald-500' },
     { value: 'rejected', label: 'Rejected', bgColor: 'bg-red-50', textColor: 'text-red-700', dotColor: 'bg-red-500' }
   ];
