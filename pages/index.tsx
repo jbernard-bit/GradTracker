@@ -478,8 +478,8 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="flex h-screen bg-slate-50">
-      {/* Sidebar Navigation */}
+    <div className="min-h-screen bg-slate-50">
+      {/* Horizontal Navigation */}
       <TabNavigation 
         tabs={tabs}
         activeTab={activeTab}
@@ -487,24 +487,24 @@ export default function Dashboard() {
       />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col overflow-hidden bg-slate-50">
-        {/* Top Header Bar */}
-        <div className="bg-white border-b border-slate-200 px-8 py-6 flex justify-between items-center" style={{ boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.05)' }}>
-          <div>
-            <h2 className="text-2xl font-bold text-slate-900">
-              {tabs.find(tab => tab.id === activeTab)?.label || 'Dashboard'}
-            </h2>
-            <p className="text-sm text-slate-600 mt-2">
-              Manage your job search efficiently
-            </p>
-          </div>
-          {activeTab === 'applications' && (
+      <div className="flex-1 bg-slate-50">
+        {/* Applications Tab */}
+      <TabContent activeTab={activeTab} tabId="applications">
+        {/* Applications Header */}
+        <div className="bg-white rounded-xl p-6 mb-6 border border-slate-200 shadow-sm">
+          <div className="flex justify-between items-center">
+            <div>
+              <h2 className="text-2xl font-bold text-slate-900">
+                Job Applications
+              </h2>
+              <p className="text-slate-600 mt-1">
+                Track and manage your {applications.length} job applications
+              </p>
+            </div>
             <ApplicationForm onApplicationAdded={handleApplicationAdded} />
-          )}
+          </div>
         </div>
 
-      {/* Applications Tab */}
-      <TabContent activeTab={activeTab} tabId="applications">
         {/* View Switcher */}
         {!loading && !error && (
           <ViewSwitcher
@@ -788,18 +788,20 @@ export default function Dashboard() {
       {/* Networking Tab */}
       <TabContent activeTab={activeTab} tabId="networking">
         {/* Networking Header */}
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h2 className="text-2xl font-bold text-slate-900">
-              Professional Network
-            </h2>
-            <p className="text-slate-600 mt-1">
-              Build and manage your professional relationships
-            </p>
+        <div className="bg-white rounded-xl p-6 mb-6 border border-slate-200 shadow-sm">
+          <div className="flex justify-between items-center">
+            <div>
+              <h2 className="text-2xl font-bold text-slate-900">
+                Professional Network
+              </h2>
+              <p className="text-slate-600 mt-1">
+                Build and manage your professional relationships
+              </p>
+            </div>
+            <AddHiringManagerForm onManagerAdded={() => {
+              console.log('Hiring manager added - list will update automatically');
+            }} />
           </div>
-          <AddHiringManagerForm onManagerAdded={() => {
-            console.log('Hiring manager added - list will update automatically');
-          }} />
         </div>
 
         {/* Network Statistics */}
