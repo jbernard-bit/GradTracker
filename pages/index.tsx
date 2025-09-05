@@ -387,14 +387,14 @@ export default function Dashboard() {
       />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden bg-slate-50">
         {/* Top Header Bar */}
-        <div className="bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center" style={{ boxShadow: 'var(--shadow-sm)' }}>
+        <div className="bg-white border-b border-slate-200 px-8 py-6 flex justify-between items-center" style={{ boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.05)' }}>
           <div>
-            <h2 className="text-xl font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+            <h2 className="text-2xl font-bold text-slate-900">
               {tabs.find(tab => tab.id === activeTab)?.label || 'Dashboard'}
             </h2>
-            <p className="text-sm text-slate-500 mt-1">
+            <p className="text-sm text-slate-600 mt-2">
               Manage your job search efficiently
             </p>
           </div>
@@ -447,34 +447,38 @@ export default function Dashboard() {
 
         {/* Enhanced Empty State */}
         {!loading && !error && filteredAndSortedApplications.length === 0 && applications.length === 0 && (
-          <div className="text-center py-20">
-            <div className="text-8xl mb-6">📝</div>
-            <h2 className="text-3xl font-bold mb-4" style={{ color: 'var(--color-text-primary)' }}>
-              No applications yet
-            </h2>
-            <p className="text-xl mb-8" style={{ color: 'var(--color-text-secondary)' }}>
-              Get started by adding your first job application!
-            </p>
-            <ApplicationForm onApplicationAdded={handleApplicationAdded} />
+          <div className="flex items-center justify-center min-h-[calc(100vh-200px)]">
+            <div className="text-center max-w-lg">
+              <div className="text-8xl mb-8">📝</div>
+              <h2 className="text-4xl font-bold mb-6 text-slate-900">
+                No applications yet
+              </h2>
+              <p className="text-xl mb-10 text-slate-600 leading-relaxed">
+                Get started by adding your first job application and begin tracking your career journey!
+              </p>
+              <ApplicationForm onApplicationAdded={handleApplicationAdded} />
+            </div>
           </div>
         )}
 
         {/* Enhanced No Results State */}
         {!loading && !error && filteredAndSortedApplications.length === 0 && applications.length > 0 && (
-          <div className="text-center py-20">
-            <div className="text-8xl mb-6">🔍</div>
-            <h2 className="text-3xl font-bold mb-4" style={{ color: 'var(--color-text-primary)' }}>
-              No matching applications
-            </h2>
-            <p className="text-xl mb-8" style={{ color: 'var(--color-text-secondary)' }}>
-              Try adjusting your filters to see more results.
-            </p>
-            <button
-              onClick={clearFilters}
-              className="btn-primary px-8 py-4 text-lg font-semibold"
-            >
-              Clear all filters
-            </button>
+          <div className="flex items-center justify-center min-h-[calc(100vh-300px)]">
+            <div className="text-center max-w-lg">
+              <div className="text-8xl mb-8">🔍</div>
+              <h2 className="text-4xl font-bold mb-6 text-slate-900">
+                No matching applications
+              </h2>
+              <p className="text-xl mb-10 text-slate-600 leading-relaxed">
+                Try adjusting your filters to see more results.
+              </p>
+              <button
+                onClick={clearFilters}
+                className="btn-primary px-8 py-4 text-lg font-semibold"
+              >
+                Clear all filters
+              </button>
+            </div>
           </div>
         )}
 
