@@ -30,13 +30,14 @@ export default function TabNavigation({ tabs, activeTab, onTabChange }: TabNavig
       </div>
 
       {/* Horizontal Navigation */}
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-7xl mx-auto" style={{ paddingLeft: '24px', paddingRight: '24px' }}>
         <nav 
-          className="flex items-center space-x-1 overflow-x-auto scrollbar-hide" 
+          className="flex items-baseline overflow-x-auto scrollbar-hide" 
           aria-label="Main Navigation"
           style={{ 
             scrollbarWidth: 'none',
-            msOverflowStyle: 'none'
+            msOverflowStyle: 'none',
+            gap: '6px'
           }}
         >
           {tabs.map((tab) => {
@@ -46,13 +47,17 @@ export default function TabNavigation({ tabs, activeTab, onTabChange }: TabNavig
                 key={tab.id}
                 onClick={() => onTabChange(tab.id)}
                 className={`
-                  group relative flex items-center justify-center gap-2 px-6 py-4 text-center font-medium transition-all duration-200 ease-in-out whitespace-nowrap min-w-fit
+                  group relative flex items-center text-center font-medium transition-all duration-200 ease-in-out whitespace-nowrap
                   ${isActive
                     ? 'text-blue-600 bg-blue-50 border-b-2 border-blue-600'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50 border-b-2 border-transparent hover:border-slate-200'
                   }
                 `}
                 style={{ 
+                  paddingLeft: '20px',
+                  paddingRight: '20px',
+                  paddingTop: '14px',
+                  paddingBottom: '14px',
                   fontSize: '15px',
                   fontWeight: '600',
                   letterSpacing: '0.025em',
@@ -61,10 +66,13 @@ export default function TabNavigation({ tabs, activeTab, onTabChange }: TabNavig
                 aria-current={isActive ? 'page' : undefined}
               >
                 {/* Icon */}
-                <span className={`
-                  transition-colors duration-200 flex-shrink-0
-                  ${isActive ? 'text-blue-600' : 'text-slate-500 group-hover:text-slate-700'}
-                `}>
+                <span 
+                  className={`
+                    transition-colors duration-200 flex-shrink-0
+                    ${isActive ? 'text-blue-600' : 'text-slate-500 group-hover:text-slate-700'}
+                  `}
+                  style={{ marginRight: '10px' }}
+                >
                   {tab.icon}
                 </span>
                 
@@ -75,17 +83,22 @@ export default function TabNavigation({ tabs, activeTab, onTabChange }: TabNavig
                 
                 {/* Count Badge */}
                 {tab.count !== undefined && (
-                  <span className={`
-                    inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-semibold transition-all duration-200 min-w-[20px] h-5
-                    ${isActive
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-slate-200 text-slate-700 group-hover:bg-slate-300'
-                    }
-                  `}
-                  style={{
-                    fontSize: '11px',
-                    fontWeight: '600'
-                  }}>
+                  <span 
+                    className={`
+                      inline-flex items-center justify-center rounded-full text-xs font-semibold transition-all duration-200 min-w-[20px] h-5
+                      ${isActive
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-slate-200 text-slate-700 group-hover:bg-slate-300'
+                      }
+                    `}
+                    style={{
+                      marginLeft: '6px',
+                      paddingLeft: '6px',
+                      paddingRight: '6px',
+                      fontSize: '11px',
+                      fontWeight: '600'
+                    }}
+                  >
                     {tab.count}
                   </span>
                 )}
