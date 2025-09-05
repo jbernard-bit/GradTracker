@@ -15,56 +15,68 @@ interface TabNavigationProps {
 
 export default function TabNavigation({ tabs, activeTab, onTabChange }: TabNavigationProps) {
   return (
-    <div className="bg-white border-b border-slate-100/50">
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 py-6">
-        <nav className="flex justify-center gap-4" aria-label="Tabs">
-          {tabs.map((tab) => {
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => onTabChange(tab.id)}
-                className={`
-                  group inline-flex items-center gap-3 px-7 py-4 text-base font-normal transition-all duration-200 ease-out
-                  ${isActive
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:text-gray-900'
-                  }
-                  rounded-full
-                `}
-                style={{ 
-                  lineHeight: '1.5',
-                  fontSize: '15px',
-                  fontWeight: '400'
-                }}
-                aria-current={isActive ? 'page' : undefined}
-              >
+    <div className="w-64 bg-white border-r border-slate-100 h-full flex flex-col">
+      {/* Sidebar Header */}
+      <div className="p-6 border-b border-slate-100">
+        <h1 className="text-xl font-semibold text-slate-800">GradTracker</h1>
+        <p className="text-sm text-slate-500 mt-1">Job Application Tracker</p>
+      </div>
+
+      {/* Navigation */}
+      <nav className="flex-1 p-4 space-y-2" aria-label="Sidebar Navigation">
+        {tabs.map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => onTabChange(tab.id)}
+              className={`
+                group w-full flex items-center gap-3 px-4 py-3 text-left font-normal transition-all duration-200 ease-out
+                ${isActive
+                  ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-600'
+                  : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                }
+                rounded-lg
+              `}
+              style={{ 
+                lineHeight: '1.5',
+                fontSize: '15px',
+                fontWeight: '400'
+              }}
+              aria-current={isActive ? 'page' : undefined}
+            >
+              <span className={`
+                transition-colors duration-200 flex-shrink-0
+                ${isActive ? 'text-blue-600' : 'text-gray-500 group-hover:text-gray-700'}
+              `}>
+                {tab.icon}
+              </span>
+              
+              <span className="transition-colors duration-200 flex-1">
+                {tab.label}
+              </span>
+              
+              {tab.count !== undefined && (
                 <span className={`
-                  transition-colors duration-200
-                  ${isActive ? 'text-white' : 'text-gray-500 group-hover:text-gray-700'}
+                  inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium transition-all duration-200 flex-shrink-0
+                  ${isActive
+                    ? 'bg-blue-100 text-blue-700'
+                    : 'bg-gray-100 text-gray-600 group-hover:bg-gray-200'
+                  }
                 `}>
-                  {tab.icon}
+                  {tab.count}
                 </span>
-                
-                <span className="transition-colors duration-200">
-                  {tab.label}
-                </span>
-                
-                {tab.count !== undefined && (
-                  <span className={`
-                    inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium transition-all duration-200
-                    ${isActive
-                      ? 'bg-white/20 text-white'
-                      : 'bg-white text-gray-600 group-hover:bg-white group-hover:text-gray-800'
-                    }
-                  `}>
-                    {tab.count}
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </nav>
+              )}
+            </button>
+          );
+        })}
+      </nav>
+
+      {/* Sidebar Footer */}
+      <div className="p-4 border-t border-slate-100">
+        <div className="text-xs text-slate-400 text-center">
+          Version 1.0.0
+        </div>
       </div>
     </div>
   );
@@ -83,8 +95,10 @@ export function TabContent({ activeTab, tabId, children }: TabContentProps) {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      {children}
+    <div className="flex-1 overflow-auto">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 py-8">
+        {children}
+      </div>
     </div>
   );
 }

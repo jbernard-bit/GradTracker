@@ -378,32 +378,30 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--color-background)' }}>
-      {/* Modern Header */}
-      <div className="bg-white border-b border-slate-200" style={{ boxShadow: 'var(--shadow-sm)' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-8">
-            <div className="flex items-center gap-4">
-                <div>
-                <h1 className="text-4xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
-                  GradTracker
-                </h1>
-                <p className="text-lg mt-2" style={{ color: 'var(--color-text-secondary)' }}>
-                  Track your job applications with ease
-                </p>
-              </div>
-            </div>
-            <ApplicationForm onApplicationAdded={handleApplicationAdded} />
-          </div>
-        </div>
-      </div>
-
-      {/* Navigation Tabs */}
+    <div className="flex h-screen" style={{ backgroundColor: 'var(--color-background)' }}>
+      {/* Sidebar Navigation */}
       <TabNavigation 
         tabs={tabs}
         activeTab={activeTab}
         onTabChange={setActiveTab}
       />
+
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Top Header Bar */}
+        <div className="bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center" style={{ boxShadow: 'var(--shadow-sm)' }}>
+          <div>
+            <h2 className="text-xl font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+              {tabs.find(tab => tab.id === activeTab)?.label || 'Dashboard'}
+            </h2>
+            <p className="text-sm text-slate-500 mt-1">
+              Manage your job search efficiently
+            </p>
+          </div>
+          {activeTab === 'applications' && (
+            <ApplicationForm onApplicationAdded={handleApplicationAdded} />
+          )}
+        </div>
 
       {/* Applications Tab */}
       <TabContent activeTab={activeTab} tabId="applications">
@@ -1233,6 +1231,7 @@ export default function Dashboard() {
             </div>
           </div>
         )}
+      </div>
     </div>
   );
 }
