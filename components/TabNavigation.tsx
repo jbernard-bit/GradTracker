@@ -47,10 +47,12 @@ export default function TabNavigation({ tabs, activeTab, onTabChange }: TabNavig
                 key={tab.id}
                 onClick={() => onTabChange(tab.id)}
                 className={`
-                  group relative flex items-center text-center font-medium transition-all duration-200 ease-in-out whitespace-nowrap
+                  group relative flex items-center text-center font-medium whitespace-nowrap rounded-t-lg outline-none
+                  transition-all duration-300 ease-out
+                  focus:ring-2 focus:ring-blue-500/20 focus:ring-offset-2 focus:ring-offset-white
                   ${isActive
-                    ? 'text-blue-600 bg-blue-50 border-b-2 border-blue-600'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50 border-b-2 border-transparent hover:border-slate-200'
+                    ? 'text-blue-700 bg-gradient-to-b from-blue-50 to-blue-25 border-b-3 border-blue-600 shadow-sm'
+                    : 'text-slate-700 bg-transparent border-b-3 border-transparent hover:text-slate-900 hover:bg-slate-50/80 hover:border-slate-300/50'
                   }
                 `}
                 style={{ 
@@ -64,12 +66,17 @@ export default function TabNavigation({ tabs, activeTab, onTabChange }: TabNavig
                   lineHeight: '1.4'
                 }}
                 aria-current={isActive ? 'page' : undefined}
+                role="tab"
+                tabIndex={isActive ? 0 : -1}
               >
                 {/* Icon */}
                 <span 
                   className={`
-                    transition-colors duration-200 flex-shrink-0
-                    ${isActive ? 'text-blue-600' : 'text-slate-500 group-hover:text-slate-700'}
+                    flex-shrink-0 transition-all duration-250 ease-out
+                    ${isActive 
+                      ? 'text-blue-600 transform scale-105' 
+                      : 'text-slate-500 group-hover:text-slate-700 group-focus:text-slate-700'
+                    }
                   `}
                   style={{ marginRight: '10px' }}
                 >
@@ -77,7 +84,7 @@ export default function TabNavigation({ tabs, activeTab, onTabChange }: TabNavig
                 </span>
                 
                 {/* Label */}
-                <span className="transition-colors duration-200">
+                <span className="transition-all duration-250 ease-out">
                   {tab.label}
                 </span>
                 
@@ -85,10 +92,11 @@ export default function TabNavigation({ tabs, activeTab, onTabChange }: TabNavig
                 {tab.count !== undefined && (
                   <span 
                     className={`
-                      inline-flex items-center justify-center rounded-full text-xs font-semibold transition-all duration-200 min-w-[20px] h-5
+                      inline-flex items-center justify-center rounded-full text-xs font-semibold min-w-[20px] h-5
+                      transition-all duration-250 ease-out
                       ${isActive
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-slate-200 text-slate-700 group-hover:bg-slate-300'
+                        ? 'bg-blue-600 text-white shadow-sm transform scale-105'
+                        : 'bg-slate-200/80 text-slate-700 group-hover:bg-slate-300/90 group-hover:text-slate-800 group-focus:bg-slate-300/90'
                       }
                     `}
                     style={{
@@ -104,12 +112,28 @@ export default function TabNavigation({ tabs, activeTab, onTabChange }: TabNavig
                 )}
 
                 {/* Active indicator line */}
-                {isActive && (
-                  <div 
-                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 transition-all duration-200"
-                    style={{ borderRadius: '2px 2px 0 0' }}
-                  />
-                )}
+                <div 
+                  className={`
+                    absolute bottom-0 left-0 right-0 h-0.5 rounded-t-sm
+                    transition-all duration-300 ease-out
+                    ${isActive 
+                      ? 'bg-blue-600 opacity-100 transform scale-x-100' 
+                      : 'bg-slate-400 opacity-0 transform scale-x-0 group-hover:opacity-30 group-hover:scale-x-75'
+                    }
+                  `}
+                />
+
+                {/* Subtle hover indicator */}
+                <div 
+                  className={`
+                    absolute inset-0 rounded-t-lg pointer-events-none
+                    transition-all duration-250 ease-out
+                    ${isActive 
+                      ? 'bg-gradient-to-r from-blue-500/5 to-blue-600/5' 
+                      : 'bg-transparent group-hover:bg-slate-100/50 group-focus:bg-slate-100/50'
+                    }
+                  `}
+                />
               </button>
             );
           })}
